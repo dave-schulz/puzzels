@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import type { LetterStatus } from '~~/shared/wordle/types'
+import type { LetterStatus, WordlePuzzle } from '~~/shared/wordle/types'
 import { formatDuration } from '~~/shared/game/date'
 import { QWERTY_ROWS } from '~~/shared/game/keyboard'
+
+const props = defineProps<{
+  puzzle: WordlePuzzle
+  title?: string
+}>()
 
 const {
   puzzle,
@@ -14,14 +19,14 @@ const {
   removeLetter,
   getTileLetter,
   getTileStatus,
-} = useWordleGame()
+} = useWordleGame(() => props.puzzle)
 
-const rows = Array.from({
-  length: puzzle.maxAttempts,
-}, (_, index) => index)
-const cols = Array.from({
-  length: puzzle.wordLength,
-}, (_, index) => index)
+const rows = computed(() => Array.from({
+  length: puzzle.value.maxAttempts,
+}, (_, index) => index))
+const cols = computed(() => Array.from({
+  length: puzzle.value.wordLength,
+}, (_, index) => index))
 
 const keyboardRows = [
   ...QWERTY_ROWS.slice(0, 2),
@@ -76,7 +81,7 @@ function keyStatusClass(key: string): LetterStatus | undefined {
       >
         <div class="wordle__top">
           <h1 class="wordle__title">
-            Woord van vandaag
+            {{ title || 'Woord van vandaag' }}
           </h1>
           <p
             class="wordle__timer"

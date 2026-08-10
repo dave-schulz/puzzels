@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PuzzleType {
+  WORDLE
+  CONNECTIONS
+}
+
+model DailyPuzzle {
+  id        String     @id @default(cuid())
+  date      String
+  type      PuzzleType
+  sortOrder Int        @default(0)
+  title     String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  wordle    WordlePuzzle?
+
+  @@unique([date, type, sortOrder])
+  @@index([date])
+}
+
+model WordlePuzzle {
+  id            String      @id @default(cuid())
+  dailyPuzzleId String      @unique
+  word          String
+  wordLength    Int         @default(5)
+  maxAttempts   Int         @default(6)
+  dailyPuzzle   DailyPuzzle @relation(fields: [dailyPuzzleId], references: [id], onDelete: Cascade)
+}
+
+model WordleDictionaryEntry {
+  word       String  @id
+  isSolution Boolean @default(true)
+}

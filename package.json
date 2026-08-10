@@ -8,26 +8,39 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "prisma generate && nuxt prepare",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:style": "stylelint \"**/*.{vue,scss}\" --fix"
+    "lint:style": "stylelint \"**/*.{vue,scss}\" --fix",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "prisma db seed",
+    "db:reset": "prisma migrate reset",
+    "db:studio": "prisma studio"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.9.1",
+    "@prisma/client": "^7.9.1",
     "@vueuse/core": "^14.4.0",
     "@vueuse/nuxt": "^14.4.0",
+    "dotenv": "^17.4.2",
     "luxon": "^3.7.2",
     "nuxt": "^4.5.2",
+    "pg": "^8.23.0",
     "vue": "^3.5.40",
     "vue-router": "^5.2.0"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.2.0",
     "@types/luxon": "^3.7.4",
+    "@types/pg": "^8.21.0",
     "eslint": "^9.39.4",
     "eslint-plugin-format": "^1.0.1",
     "postcss-html": "^1.8.1",
     "prettier": "^3.6.2",
+    "prisma": "^7.9.1",
     "sass": "^1.102.0",
     "stylelint": "^16.26.1",
     "stylelint-config-recommended-scss": "^14.1.0",
@@ -36,6 +49,7 @@
     "stylelint-order": "^6.0.4",
     "stylelint-prettier": "^5.0.3",
     "stylelint-scss": "^6.11.0",
+    "tsx": "^4.23.11",
     "typescript": "^5.9.2"
   }
 }

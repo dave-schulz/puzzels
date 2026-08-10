@@ -1,11 +1,10 @@
-import type { LetterResult } from '~~/shared/wordle/types'
+import type { LetterResult, WordlePuzzle } from '~~/shared/wordle/types'
 import { normalizeLetterKey } from '~~/shared/game/keyboard'
 import { calculateScore } from '~~/shared/game/score'
 import { createInvalidGuessRow, evaluateGuess, getBestKeyStatuses, isValidGuess } from '~~/shared/wordle/logic'
-import { mockPuzzle } from '~~/shared/wordle/mockPuzzle'
 
-export function useWordleGame() {
-  const puzzle = mockPuzzle
+export function useWordleGame(puzzleSource: MaybeRefOrGetter<WordlePuzzle>) {
+  const puzzle = computed(() => toValue(puzzleSource))
   const guesses = ref<LetterResult[][]>([])
   const currentGuess = ref('')
 
@@ -57,7 +56,7 @@ export function useWordleGame() {
     setMessage(
       nextStatus === 'won'
         ? 'Gewonnen!'
-        : `Het woord was ${puzzle.word.toUpperCase()}`,
+        : `Het woord was ${puzzle.value.word.toUpperCase()}`,
     )
   }
 
@@ -71,7 +70,7 @@ export function useWordleGame() {
       return
     }
 
-    if (guesses.value.length >= puzzle.maxAttempts) {
+    if (guesses.value.length >= puzzle.value.maxAttempts) {
       finish('lost')
     }
   }
@@ -86,7 +85,7 @@ export function useWordleGame() {
       return
     }
 
-    if (currentGuess.value.length >= puzzle.wordLength) {
+    if (currentGuess.value.length >= puzzle.value.wordLength) {
       return
     }
 
@@ -94,7 +93,7 @@ export function useWordleGame() {
     clearMessage()
     currentGuess.value += normalized
 
-    if (currentGuess.value.length === puzzle.wordLength) {
+    if (currentGuess.value.length === puzzle.value.wordLength) {
       submitGuess()
     }
   }
@@ -113,18 +112,18 @@ export function useWordleGame() {
       return
     }
 
-    if (currentGuess.value.length !== puzzle.wordLength) {
-      setMessage(`Voer ${puzzle.wordLength} letters in`)
+    if (currentGuess.value.length !== puzzle.value.wordLength) {
+      setMessage(`Voer ${puzzle.value.wordLength} letters in`)
       return
     }
 
-    if (!isValidGuess(currentGuess.value, puzzle.wordLength, puzzle.allowedWords)) {
+    if (!isValidGuess(currentGuess.value, puzzle.value.wordLength, puzzle.value.allowedWords)) {
       setMessage('Onbekend woord')
       commitRow(createInvalidGuessRow(currentGuess.value))
       return
     }
 
-    commitRow(evaluateGuess(currentGuess.value, puzzle.word))
+    commitRow(evaluateGuess(currentGuess.value, puzzle.value.word))
   }
 
   function getTileLetter(rowIndex: number, colIndex: number): string {

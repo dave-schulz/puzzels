@@ -41,4 +41,13 @@ export default antfu({
       'always',
     ],
   },
+}, {
+  files: [
+    'prisma/**/*.ts',
+    'server/**/*.ts',
+  ],
+  rules: {
+    'no-console': 'off',
+    'node/prefer-global/process': 'off',
+  },
 })

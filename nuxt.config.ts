@@ -35,4 +35,15 @@ export default defineNuxtConfig({
       },
     },
   },
+  nitro: {
+    // Prisma client + pg driver must stay external for Nitro
+    externals: {
+      inline: [],
+    },
+    moduleSideEffects: [
+      'prisma',
+      '@prisma/client',
+      '@prisma/adapter-pg',
+    ],
+  },
 })

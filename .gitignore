@@ -24,6 +24,9 @@ logs
 .env.*
 !.env.example
 
+# Prisma generated client
+prisma/generated
+
 # Local working notes (not part of the product repo)
 # Also add `notes/` to .cursorignore locally if you want Cursor to skip them.
 notes/
