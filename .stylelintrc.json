@@ -1,0 +1,23 @@
+{
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-recommended-vue/scss"
+  ],
+  "plugins": ["stylelint-order", "stylelint-prettier"],
+  "rules": {
+    "no-empty-source": null,
+    "block-no-empty": null,
+    "selector-class-pattern": null,
+    "font-family-no-missing-generic-family-keyword": null,
+    "scss/no-global-function-names": null,
+    "no-descending-specificity": null
+  },
+  "ignoreFiles": [
+    ".nuxt/**",
+    ".output/**",
+    "dist/**",
+    "node_modules/**",
+    "public/**",
+    "notes/**"
+  ]
+}

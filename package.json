@@ -1,0 +1,41 @@
+{
+  "name": "puzzels",
+  "type": "module",
+  "private": true,
+  "packageManager": "pnpm@11.5.1+sha512.93f7b57422ea7068257235b4c16eb60762eb68e1dc23723199cc739043ea9be2c4143274a399d8c6defa2b1176226d9ca1c4b63482d6200c1a8fbaa78c1d1485",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:style": "stylelint \"**/*.{vue,scss}\" --fix"
+  },
+  "dependencies": {
+    "@vueuse/core": "^14.4.0",
+    "@vueuse/nuxt": "^14.4.0",
+    "luxon": "^3.7.2",
+    "nuxt": "^4.5.2",
+    "vue": "^3.5.40",
+    "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^4.2.0",
+    "@types/luxon": "^3.7.4",
+    "eslint": "^9.39.4",
+    "eslint-plugin-format": "^1.0.1",
+    "postcss-html": "^1.8.1",
+    "prettier": "^3.6.2",
+    "sass": "^1.102.0",
+    "stylelint": "^16.26.1",
+    "stylelint-config-recommended-scss": "^14.1.0",
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "stylelint-config-standard-scss": "^13.1.0",
+    "stylelint-order": "^6.0.4",
+    "stylelint-prettier": "^5.0.3",
+    "stylelint-scss": "^6.11.0",
+    "typescript": "^5.9.2"
+  }
+}
