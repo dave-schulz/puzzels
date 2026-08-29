@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../providers/progress_provider.dart';
+import '../../providers/streak_provider.dart';
+import '../../providers/xp_provider.dart';
 import '../level/widgets/level_progress_bar.dart';
 import '../streak/widgets/streak_badge.dart';
-import '../streak/widgets/streak_scope.dart';
 import '../xp/widgets/xp_badge.dart';
-import '../xp/widgets/xp_scope.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final xpController = XpScope.of(context);
-    final streakController = StreakScope.of(context);
+    final totalXp = ref.watch(totalXpProvider);
+    final streak = ref.watch(streakCountProvider);
+    final levelProgress = ref.watch(levelProgressProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -39,22 +42,21 @@ class ProfileScreen extends StatelessWidget {
               style: theme.textTheme.headlineMedium,
             ),
             const SizedBox(height: 16),
-            ListenableBuilder(
-              listenable: xpController,
-              builder: (context, _) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (streakController.streak > 0) ...[
-                      StreakBadge(streak: streakController.streak),
-                      const SizedBox(height: 12),
-                    ],
-                    XpBadge(total: xpController.total),
-                    const SizedBox(height: 16),
-                    LevelProgressBar(totalXp: xpController.total),
-                  ],
-                );
-              },
+            if (streak > 0) ...[
+              StreakBadge(streak: streak),
+              const SizedBox(height: 12),
+            ],
+            XpBadge(total: totalXp),
+            const SizedBox(height: 16),
+            LevelProgressBar(totalXp: totalXp),
+            const SizedBox(height: 8),
+            Text(
+              levelProgress.isMaxLevel
+                  ? 'Max level reached'
+                  : 'Level ${levelProgress.level}',
+              style: theme.textTheme.bodyLarge?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 8),
             Text(

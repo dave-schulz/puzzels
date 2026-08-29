@@ -1,54 +1,31 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../providers/lesson_provider.dart';
 import '../level/level_up_screen.dart';
-import '../puzzle/models/puzzle.dart';
-import '../puzzle/widgets/answer_button.dart';
 import '../puzzle/widgets/answer_list.dart';
 import '../puzzle/widgets/puzzle_feedback.dart';
 import '../puzzle/widgets/puzzle_progress.dart';
 import '../puzzle/widgets/puzzle_renderer.dart';
-import '../streak/widgets/streak_scope.dart';
 import '../xp/widgets/xp_gain_animation.dart';
-import '../xp/widgets/xp_scope.dart';
-import '../xp/xp_calculator.dart';
 import 'lesson_result_screen.dart';
-import 'models/lesson.dart';
-import 'models/lesson_result.dart';
 
-enum _PuzzleResult { none, correct, incorrect }
-
-class LessonScreen extends StatefulWidget {
-  const LessonScreen({
-    super.key,
-    required this.lesson,
-  });
-
-  final Lesson lesson;
+class LessonScreen extends ConsumerStatefulWidget {
+  const LessonScreen({super.key});
 
   @override
-  State<LessonScreen> createState() => _LessonScreenState();
+  ConsumerState<LessonScreen> createState() => _LessonScreenState();
 }
 
-class _LessonScreenState extends State<LessonScreen>
+class _LessonScreenState extends ConsumerState<LessonScreen>
     with SingleTickerProviderStateMixin {
-  late int _puzzleIndex;
-  int _correctCount = 0;
-  int _sessionXpEarned = 0;
-  int _hearts = 5;
-  int? _selectedIndex;
-  int? _xpGainAmount;
-  int _xpAnimationKey = 0;
-  _PuzzleResult _result = _PuzzleResult.none;
   late final AnimationController _shakeController;
-
-  Puzzle get _puzzle => widget.lesson.puzzles[_puzzleIndex];
 
   @override
   void initState() {
     super.initState();
-    _puzzleIndex = 0;
     _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -61,61 +38,6 @@ class _LessonScreenState extends State<LessonScreen>
     super.dispose();
   }
 
-  bool get _isAnswered => _result != _PuzzleResult.none;
-  bool get _isLastPuzzle =>
-      _puzzleIndex >= widget.lesson.puzzles.length - 1;
-
-  void _selectAnswer(int index) {
-    if (_isAnswered) return;
-
-    setState(() => _selectedIndex = index);
-
-    if (index == _puzzle.correctIndex) {
-      final reward = XpCalculator.rewardFor(_puzzle.difficulty);
-      final levelUp = XpScope.of(context).add(reward.amount);
-      setState(() {
-        _result = _PuzzleResult.correct;
-        _sessionXpEarned += reward.amount;
-        _xpGainAmount = reward.amount;
-        _xpAnimationKey++;
-      });
-      if (levelUp != null && mounted) {
-        _showLevelUp(levelUp.toLevel);
-      }
-    } else {
-      _shakeController.forward(from: 0);
-      setState(() {
-        _result = _PuzzleResult.incorrect;
-        _hearts = (_hearts - 1).clamp(0, 5);
-      });
-    }
-  }
-
-  AnswerState _stateForIndex(int index) {
-    if (!_isAnswered) {
-      return _selectedIndex == index ? AnswerState.selected : AnswerState.idle;
-    }
-    if (index == _puzzle.correctIndex) return AnswerState.correct;
-    if (index == _selectedIndex) return AnswerState.incorrect;
-    return AnswerState.idle;
-  }
-
-  void _finishLesson() {
-    StreakScope.of(context).recordLessonCompleted();
-
-    final result = LessonResult(
-      correctCount: _correctCount,
-      totalCount: widget.lesson.puzzleCount,
-      xpEarned: _sessionXpEarned,
-    );
-
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(
-        builder: (context) => LessonResultScreen(result: result),
-      ),
-    );
-  }
-
   Future<void> _showLevelUp(int level) {
     return Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
@@ -125,42 +47,56 @@ class _LessonScreenState extends State<LessonScreen>
     );
   }
 
-  void _onContinue() {
-    if (_result == _PuzzleResult.correct) {
-      _correctCount++;
+  void _selectAnswer(int index) {
+    final levelUp =
+        ref.read(lessonSessionProvider.notifier).selectAnswer(index);
 
-      if (_isLastPuzzle) {
-        _finishLesson();
-        return;
-      }
-
-      setState(() {
-        _puzzleIndex++;
-        _selectedIndex = null;
-        _result = _PuzzleResult.none;
-        _xpGainAmount = null;
-      });
-      return;
+    final session = ref.read(lessonSessionProvider);
+    if (session?.result == PuzzleAnswerResult.incorrect) {
+      _shakeController.forward(from: 0);
     }
 
-    setState(() {
-      _selectedIndex = null;
-      _result = _PuzzleResult.none;
-    });
+    if (levelUp != null && mounted) {
+      _showLevelUp(levelUp.toLevel);
+    }
+  }
+
+  void _onContinue() {
+    final result =
+        ref.read(lessonSessionProvider.notifier).continueAfterFeedback();
+
+    if (result != null && mounted) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute<void>(
+          builder: (context) => LessonResultScreen(result: result),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final session = ref.watch(lessonSessionProvider);
+    if (session == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     final theme = Theme.of(context);
-    final puzzleNumber = _puzzleIndex + 1;
+    final puzzle = session.currentPuzzle;
+    final puzzleNumber = session.puzzleIndex + 1;
 
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.close),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            ref.read(lessonSessionProvider.notifier).clear();
+            Navigator.of(context).pop();
+          },
         ),
-        title: Text('$puzzleNumber / ${widget.lesson.puzzleCount}'),
+        title: Text('$puzzleNumber / ${session.lesson.puzzleCount}'),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -169,7 +105,7 @@ class _LessonScreenState extends State<LessonScreen>
                 Icon(Icons.favorite, color: theme.colorScheme.error),
                 const SizedBox(width: 4),
                 Text(
-                  '$_hearts',
+                  '${session.hearts}',
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.error,
                     fontWeight: FontWeight.w700,
@@ -188,8 +124,8 @@ class _LessonScreenState extends State<LessonScreen>
             children: [
               const SizedBox(height: 8),
               PuzzleProgress(
-                total: widget.lesson.puzzleCount,
-                completed: _puzzleIndex,
+                total: session.lesson.puzzleCount,
+                completed: session.puzzleIndex,
               ),
               Expanded(
                 child: Padding(
@@ -203,52 +139,54 @@ class _LessonScreenState extends State<LessonScreen>
                             animation: _shakeController,
                             builder: (context, child) {
                               final shake = _shakeController.value;
-                              final offset = _result == _PuzzleResult.incorrect
-                                  ? Offset(
-                                      math.sin(shake * 4 * math.pi) * 8,
-                                      0,
-                                    )
-                                  : Offset.zero;
+                              final offset =
+                                  session.result == PuzzleAnswerResult.incorrect
+                                      ? Offset(
+                                          math.sin(shake * 4 * math.pi) * 8,
+                                          0,
+                                        )
+                                      : Offset.zero;
                               return Transform.translate(
                                 offset: offset,
                                 child: child,
                               );
                             },
-                            child: PuzzleRenderer(puzzle: _puzzle),
+                            child: PuzzleRenderer(puzzle: puzzle),
                           ),
                         ),
                       ),
                       const SizedBox(height: 16),
                       AnswerList(
-                        options: _puzzle.options,
-                        enabled: !_isAnswered,
-                        stateForIndex: _stateForIndex,
+                        options: puzzle.options,
+                        enabled: !session.isAnswered,
+                        stateForIndex: session.answerStateForIndex,
                         onSelected: _selectAnswer,
                       ),
                     ],
                   ),
                 ),
               ),
-              if (_isAnswered)
+              if (session.isAnswered)
                 PuzzleFeedback(
-                  type: _result == _PuzzleResult.correct
+                  type: session.result == PuzzleAnswerResult.correct
                       ? FeedbackType.correct
                       : FeedbackType.incorrect,
-                  correctAnswer: _puzzle.correctAnswer,
+                  correctAnswer: puzzle.correctAnswer,
                   continueLabel:
-                      _result == _PuzzleResult.correct && _isLastPuzzle
+                      session.result == PuzzleAnswerResult.correct &&
+                              session.isLastPuzzle
                           ? 'Finish'
                           : 'Continue',
                   onContinue: _onContinue,
                 ),
             ],
           ),
-          if (_xpGainAmount != null)
+          if (session.xpGainAmount != null)
             Positioned(
               bottom: 180,
               child: XpGainAnimation(
-                key: ValueKey(_xpAnimationKey),
-                amount: _xpGainAmount!,
+                key: ValueKey(session.xpAnimationKey),
+                amount: session.xpGainAmount!,
               ),
             ),
         ],

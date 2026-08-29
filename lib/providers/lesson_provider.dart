@@ -1,0 +1,95 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../features/lesson/models/lesson.dart';
+import '../features/lesson/models/lesson_result.dart';
+import '../features/lesson/models/lesson_session_state.dart';
+import '../features/level/models/level_up.dart';
+import '../features/xp/xp_calculator.dart';
+import 'puzzle_provider.dart';
+import 'streak_provider.dart';
+import 'xp_provider.dart';
+
+export '../features/lesson/models/lesson_session_state.dart';
+
+class LessonSessionNotifier extends Notifier<LessonSessionState?> {
+  @override
+  LessonSessionState? build() => null;
+
+  void start(Lesson lesson) {
+    state = LessonSessionState(lesson: lesson);
+  }
+
+  void clear() {
+    state = null;
+  }
+
+  LevelUp? selectAnswer(int index) {
+    final session = state;
+    if (session == null || session.isAnswered) return null;
+
+    if (index == session.currentPuzzle.correctIndex) {
+      final reward = XpCalculator.rewardFor(session.currentPuzzle.difficulty);
+      final levelUp = ref.read(xpControllerProvider).add(reward.amount);
+
+      state = session.copyWith(
+        selectedIndex: index,
+        result: PuzzleAnswerResult.correct,
+        sessionXpEarned: session.sessionXpEarned + reward.amount,
+        xpGainAmount: reward.amount,
+        xpAnimationKey: session.xpAnimationKey + 1,
+      );
+      return levelUp;
+    }
+
+    state = session.copyWith(
+      selectedIndex: index,
+      result: PuzzleAnswerResult.incorrect,
+      hearts: (session.hearts - 1).clamp(0, 5),
+    );
+    return null;
+  }
+
+  LessonResult? continueAfterFeedback() {
+    final session = state;
+    if (session == null || !session.isAnswered) return null;
+
+    if (session.result == PuzzleAnswerResult.correct) {
+      final updatedCorrectCount = session.correctCount + 1;
+
+      if (session.isLastPuzzle) {
+        ref.read(streakControllerProvider).recordLessonCompleted();
+        final result = LessonResult(
+          correctCount: updatedCorrectCount,
+          totalCount: session.lesson.puzzleCount,
+          xpEarned: session.sessionXpEarned,
+        );
+        state = null;
+        return result;
+      }
+
+      state = session.copyWith(
+        puzzleIndex: session.puzzleIndex + 1,
+        correctCount: updatedCorrectCount,
+        clearSelectedIndex: true,
+        clearXpGainAmount: true,
+        result: PuzzleAnswerResult.none,
+      );
+      return null;
+    }
+
+    state = session.copyWith(
+      clearSelectedIndex: true,
+      result: PuzzleAnswerResult.none,
+    );
+    return null;
+  }
+}
+
+final lessonSessionProvider =
+    NotifierProvider<LessonSessionNotifier, LessonSessionState?>(
+  LessonSessionNotifier.new,
+);
+
+final generateLessonProvider = Provider.family<Lesson, String>(
+  (ref, title) => ref.watch(lessonGeneratorProvider).generate(title: title),
+);
