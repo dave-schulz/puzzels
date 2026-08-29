@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 
-class PuzzleQuestion extends StatelessWidget {
-  const PuzzleQuestion({
+import '../models/puzzle.dart';
+
+class SequencePuzzle extends StatelessWidget {
+  const SequencePuzzle({
     super.key,
-    required this.prompt,
-    required this.sequence,
+    required this.puzzle,
   });
 
-  final String prompt;
-  final List<String> sequence;
+  final Puzzle puzzle;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final sequence = puzzle.sequence ?? const [];
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          prompt,
+          puzzle.prompt,
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),

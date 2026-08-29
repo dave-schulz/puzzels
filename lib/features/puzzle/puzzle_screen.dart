@@ -2,15 +2,23 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import 'data/sample_puzzles.dart';
+import 'models/puzzle.dart';
 import 'widgets/answer_button.dart';
+import 'widgets/answer_list.dart';
 import 'widgets/puzzle_feedback.dart';
 import 'widgets/puzzle_progress.dart';
-import 'widgets/puzzle_question.dart';
+import 'widgets/puzzle_renderer.dart';
 
 enum _PuzzleResult { none, correct, incorrect }
 
 class PuzzleScreen extends StatefulWidget {
-  const PuzzleScreen({super.key});
+  const PuzzleScreen({
+    super.key,
+    this.puzzles = samplePuzzles,
+  });
+
+  final List<Puzzle> puzzles;
 
   @override
   State<PuzzleScreen> createState() => _PuzzleScreenState();
@@ -18,21 +26,20 @@ class PuzzleScreen extends StatefulWidget {
 
 class _PuzzleScreenState extends State<PuzzleScreen>
     with SingleTickerProviderStateMixin {
-  static const _prompt = 'What comes next?';
-  static const _sequence = ['2', '4', '6', '?'];
-  static const _answers = ['8', '10', '12', '14'];
-  static const _correctIndex = 0;
   static const _totalSteps = 5;
-  static const _completedSteps = 2;
 
+  late int _puzzleIndex;
   int _hearts = 5;
   int? _selectedIndex;
   _PuzzleResult _result = _PuzzleResult.none;
   late final AnimationController _shakeController;
 
+  Puzzle get _puzzle => widget.puzzles[_puzzleIndex];
+
   @override
   void initState() {
     super.initState();
+    _puzzleIndex = 0;
     _shakeController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 500),
@@ -46,13 +53,14 @@ class _PuzzleScreenState extends State<PuzzleScreen>
   }
 
   bool get _isAnswered => _result != _PuzzleResult.none;
+  bool get _isLastPuzzle => _puzzleIndex >= widget.puzzles.length - 1;
 
   void _selectAnswer(int index) {
     if (_isAnswered) return;
 
     setState(() => _selectedIndex = index);
 
-    if (index == _correctIndex) {
+    if (index == _puzzle.correctIndex) {
       setState(() => _result = _PuzzleResult.correct);
     } else {
       _shakeController.forward(from: 0);
@@ -67,16 +75,25 @@ class _PuzzleScreenState extends State<PuzzleScreen>
     if (!_isAnswered) {
       return _selectedIndex == index ? AnswerState.selected : AnswerState.idle;
     }
-    if (index == _correctIndex) return AnswerState.correct;
+    if (index == _puzzle.correctIndex) return AnswerState.correct;
     if (index == _selectedIndex) return AnswerState.incorrect;
     return AnswerState.idle;
   }
 
   void _onContinue() {
     if (_result == _PuzzleResult.correct) {
-      Navigator.of(context).pop();
+      if (_isLastPuzzle) {
+        Navigator.of(context).pop();
+        return;
+      }
+      setState(() {
+        _puzzleIndex++;
+        _selectedIndex = null;
+        _result = _PuzzleResult.none;
+      });
       return;
     }
+
     setState(() {
       _selectedIndex = null;
       _result = _PuzzleResult.none;
@@ -118,7 +135,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
           const SizedBox(height: 8),
           PuzzleProgress(
             total: _totalSteps,
-            completed: _completedSteps,
+            completed: _puzzleIndex,
           ),
           Expanded(
             child: Padding(
@@ -135,21 +152,15 @@ class _PuzzleScreenState extends State<PuzzleScreen>
                           : Offset.zero;
                       return Transform.translate(offset: offset, child: child);
                     },
-                    child: PuzzleQuestion(
-                      prompt: _prompt,
-                      sequence: _sequence,
-                    ),
+                    child: PuzzleRenderer(puzzle: _puzzle),
                   ),
                   const Spacer(),
-                  for (var i = 0; i < _answers.length; i++) ...[
-                    if (i > 0) const SizedBox(height: 16),
-                    AnswerButton(
-                      label: _answers[i],
-                      state: _stateForIndex(i),
-                      enabled: !_isAnswered,
-                      onPressed: () => _selectAnswer(i),
-                    ),
-                  ],
+                  AnswerList(
+                    options: _puzzle.options,
+                    enabled: !_isAnswered,
+                    stateForIndex: _stateForIndex,
+                    onSelected: _selectAnswer,
+                  ),
                 ],
               ),
             ),
@@ -159,7 +170,7 @@ class _PuzzleScreenState extends State<PuzzleScreen>
               type: _result == _PuzzleResult.correct
                   ? FeedbackType.correct
                   : FeedbackType.incorrect,
-              correctAnswer: _answers[_correctIndex],
+              correctAnswer: _puzzle.correctAnswer,
               onContinue: _onContinue,
             ),
         ],
