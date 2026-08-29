@@ -29,7 +29,7 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
 
     if (index == session.currentPuzzle.correctIndex) {
       final reward = XpCalculator.rewardFor(session.currentPuzzle.difficulty);
-      final levelUp = ref.read(xpControllerProvider).add(reward.amount);
+      final levelUp = ref.read(xpProvider.notifier).add(reward.amount);
 
       state = session.copyWith(
         selectedIndex: index,
@@ -57,7 +57,7 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
       final updatedCorrectCount = session.correctCount + 1;
 
       if (session.isLastPuzzle) {
-        ref.read(streakControllerProvider).recordLessonCompleted();
+        ref.read(streakProvider.notifier).recordLessonCompleted();
         final result = LessonResult(
           correctCount: updatedCorrectCount,
           totalCount: session.lesson.puzzleCount,

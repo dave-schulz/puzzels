@@ -10,25 +10,25 @@ import 'package:brainy/providers/xp_provider.dart';
 
 void main() {
   group('Riverpod providers', () {
-    test('xpControllerProvider tracks XP and level', () {
+    test('xpProvider tracks XP and level', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final controller = container.read(xpControllerProvider);
       expect(container.read(totalXpProvider), 0);
       expect(container.read(levelProvider), 1);
 
-      controller.add(100);
+      container.read(xpProvider.notifier).add(100);
       expect(container.read(totalXpProvider), 100);
       expect(container.read(levelProvider), 2);
     });
 
-    test('streakControllerProvider records lesson completion', () {
+    test('streakProvider records lesson completion', () {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final controller = container.read(streakControllerProvider);
-      controller.recordLessonCompleted(DateTime(2026, 1, 1));
+      container
+          .read(streakProvider.notifier)
+          .recordLessonCompleted(DateTime(2026, 1, 1));
 
       expect(container.read(streakCountProvider), 1);
     });
@@ -65,9 +65,9 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      container.read(xpControllerProvider).add(50);
+      container.read(xpProvider.notifier).add(50);
       container
-          .read(streakControllerProvider)
+          .read(streakProvider.notifier)
           .recordLessonCompleted(DateTime(2026, 1, 1));
 
       final homeState = container.read(homeStateProvider);
@@ -81,7 +81,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      container.read(xpControllerProvider).add(100);
+      container.read(xpProvider.notifier).add(100);
       expect(container.read(levelProgressProvider).level, 2);
     });
   });

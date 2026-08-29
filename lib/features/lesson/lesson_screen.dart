@@ -57,7 +57,11 @@ class _LessonScreenState extends ConsumerState<LessonScreen>
     }
 
     if (levelUp != null && mounted) {
-      _showLevelUp(levelUp.toLevel);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showLevelUp(levelUp.toLevel);
+        }
+      });
     }
   }
 
