@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../lesson/generators/lesson_generator.dart';
 import '../lesson/lesson_screen.dart';
+import '../level/widgets/level_progress_bar.dart';
 import '../xp/widgets/xp_badge.dart';
 import '../xp/widgets/xp_scope.dart';
 
@@ -38,6 +39,13 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ],
+              ),
+              const SizedBox(height: 24),
+              ListenableBuilder(
+                listenable: xpController,
+                builder: (context, _) {
+                  return LevelProgressBar(totalXp: xpController.total);
+                },
               ),
               const SizedBox(height: 8),
               Text(

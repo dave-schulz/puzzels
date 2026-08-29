@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../level/level_up_screen.dart';
 import '../puzzle/models/puzzle.dart';
 import '../puzzle/widgets/answer_button.dart';
 import '../puzzle/widgets/answer_list.dart';
@@ -70,13 +71,16 @@ class _LessonScreenState extends State<LessonScreen>
 
     if (index == _puzzle.correctIndex) {
       final reward = XpCalculator.rewardFor(_puzzle.difficulty);
-      XpScope.of(context).add(reward.amount);
+      final levelUp = XpScope.of(context).add(reward.amount);
       setState(() {
         _result = _PuzzleResult.correct;
         _sessionXpEarned += reward.amount;
         _xpGainAmount = reward.amount;
         _xpAnimationKey++;
       });
+      if (levelUp != null && mounted) {
+        _showLevelUp(levelUp.toLevel);
+      }
     } else {
       _shakeController.forward(from: 0);
       setState(() {
@@ -105,6 +109,15 @@ class _LessonScreenState extends State<LessonScreen>
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (context) => LessonResultScreen(result: result),
+      ),
+    );
+  }
+
+  Future<void> _showLevelUp(int level) {
+    return Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        fullscreenDialog: true,
+        builder: (context) => LevelUpScreen(level: level),
       ),
     );
   }

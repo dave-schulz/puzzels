@@ -30,7 +30,21 @@ void main() {
       controller.add(10);
 
       expect(controller.total, 30);
+      expect(controller.level, 1);
       expect(notifications, 2);
+    });
+
+    test('detects level up', () {
+      final controller = XpController();
+
+      controller.add(90);
+      final levelUp = controller.add(20);
+
+      expect(controller.total, 110);
+      expect(controller.level, 2);
+      expect(levelUp, isNotNull);
+      expect(levelUp!.fromLevel, 1);
+      expect(levelUp.toLevel, 2);
     });
 
     test('ignores non-positive amounts', () {
