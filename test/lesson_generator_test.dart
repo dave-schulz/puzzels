@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:brainy/features/lesson/generators/lesson_generator.dart';
-import 'package:brainy/features/puzzle/generators/sequence_generator.dart';
+import 'package:brainy/features/puzzle/models/puzzle_type.dart';
 
 void main() {
   group('LessonGenerator', () {
@@ -9,7 +9,14 @@ void main() {
       final lesson = LessonGenerator().generate();
 
       expect(lesson.puzzles, hasLength(5));
-      expect(lesson.puzzles.length, SequenceGenerator.defaultSessionDifficulties.length);
+    });
+
+    test('includes logic and sequence puzzles', () {
+      final lesson = LessonGenerator().generate();
+      final types = lesson.puzzles.map((puzzle) => puzzle.type).toSet();
+
+      expect(types, contains(PuzzleType.sequence));
+      expect(types, contains(PuzzleType.multipleChoice));
     });
   });
 }
