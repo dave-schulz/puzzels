@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:brainy/main.dart';
+import 'package:brainy/app.dart';
 
 void main() {
-  testWidgets('App starts with home tab', (WidgetTester tester) async {
+  testWidgets('App starts on home screen', (WidgetTester tester) async {
     await tester.pumpWidget(const BrainyApp());
 
-    expect(find.text('Brainy'), findsOneWidget);
-    expect(find.text('Home'), findsOneWidget);
+    expect(find.text('Good evening 👋'), findsOneWidget);
+    expect(find.text('Start'), findsOneWidget);
   });
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../features/home/home_screen.dart';
-import '../../features/profile/profile_screen.dart';
+import '../features/home/home_screen.dart';
+import '../features/profile/profile_screen.dart';
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
@@ -27,9 +27,7 @@ class _AppShellState extends State<AppShell> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _currentIndex,
-        onDestinationSelected: (index) {
-          setState(() => _currentIndex = index);
-        },
+        onDestinationSelected: (index) => setState(() => _currentIndex = index),
         destinations: const [
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
