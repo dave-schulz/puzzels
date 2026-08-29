@@ -68,11 +68,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
+  bool get _isRouteVisible {
+    final route = ModalRoute.of(context);
+    return route == null || route.isCurrent;
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final homeState = ref.watch(homeStateProvider);
-    final dailyCompleted = ref.watch(dailyChallengeCompletedProvider);
+    // Avoid subscribing while a lesson/overlay covers this route — prevents
+    // Riverpod from scheduling rebuilds during overlay builds.
+    final homeState = _isRouteVisible
+        ? ref.watch(homeStateProvider)
+        : ref.read(homeStateProvider);
+    final dailyCompleted = _isRouteVisible
+        ? ref.watch(dailyChallengeCompletedProvider)
+        : ref.read(dailyChallengeCompletedProvider);
 
     return Scaffold(
       body: SafeArea(

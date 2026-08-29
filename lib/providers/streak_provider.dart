@@ -43,7 +43,7 @@ class StreakNotifier extends Notifier<StreakData> {
       lastPlayDate: update.lastPlayDate,
     );
 
-    persistStreakProgress(ref, state);
+    Future.microtask(() => persistStreakProgress(ref, state));
   }
 }
 

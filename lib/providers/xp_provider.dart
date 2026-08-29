@@ -21,7 +21,7 @@ class XpNotifier extends Notifier<int> {
     state += amount;
     final levelAfter = LevelCalculator.levelFor(state);
 
-    persistXpProgress(ref, state);
+    Future.microtask(() => persistXpProgress(ref, state));
 
     if (levelAfter > levelBefore) {
       return LevelUp(fromLevel: levelBefore, toLevel: levelAfter);
