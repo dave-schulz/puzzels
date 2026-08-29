@@ -2,14 +2,53 @@ import 'package:flutter/material.dart';
 
 import '../lesson/generators/lesson_generator.dart';
 import '../lesson/lesson_screen.dart';
-import '../level/widgets/level_progress_bar.dart';
-import '../streak/widgets/streak_badge.dart';
 import '../streak/widgets/streak_scope.dart';
-import '../xp/widgets/xp_badge.dart';
 import '../xp/widgets/xp_scope.dart';
+import 'home_greeting.dart';
+import 'widgets/continue_training_card.dart';
+import 'widgets/daily_challenge_card.dart';
+import 'widgets/home_stats_row.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _fadeController;
+  late final Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _fadeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    );
+    _fadeController.forward();
+  }
+
+  @override
+  void dispose() {
+    _fadeController.dispose();
+    super.dispose();
+  }
+
+  void _startLesson(BuildContext context) {
+    final lesson = LessonGenerator().generate();
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => LessonScreen(lesson: lesson),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,71 +58,58 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Good evening 👋',
+        child: FadeTransition(
+          opacity: _fadeAnimation,
+          child: ListenableBuilder(
+            listenable: Listenable.merge([xpController, streakController]),
+            builder: (context, _) {
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Text(
+                      '${homeGreeting()} 👋',
                       style: theme.textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                       ),
                     ),
-                  ),
-                  ListenableBuilder(
-                    listenable: xpController,
-                    builder: (context, _) {
-                      return XpBadge(total: xpController.total);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              ListenableBuilder(
-                listenable: streakController,
-                builder: (context, _) {
-                  if (streakController.streak == 0) {
-                    return const SizedBox.shrink();
-                  }
-                  return StreakBadge(streak: streakController.streak);
-                },
-              ),
-              const SizedBox(height: 12),
-              ListenableBuilder(
-                listenable: xpController,
-                builder: (context, _) {
-                  return LevelProgressBar(totalXp: xpController.total);
-                },
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Ready for your first lesson?',
-                style: theme.textTheme.bodyLarge?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-              ),
-              const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: FilledButton(
-                  onPressed: () {
-                    final lesson = LessonGenerator().generate();
-                    Navigator.of(context).push<void>(
-                      MaterialPageRoute<void>(
-                        builder: (context) => LessonScreen(lesson: lesson),
+                    const SizedBox(height: 16),
+                    HomeStatsRow(
+                      streak: streakController.streak,
+                      totalXp: xpController.total,
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      'Continue training',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
-                    );
-                  },
-                  child: const Text('Start'),
+                    ),
+                    const SizedBox(height: 12),
+                    ContinueTrainingCard(
+                      totalXp: xpController.total,
+                      onContinue: () => _startLesson(context),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      'Daily Challenge',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    DailyChallengeCard(
+                      onTap: () => _startLesson(context),
+                    ),
+                    const SizedBox(height: 24),
+                  ],
                 ),
-              ),
-              const SizedBox(height: 24),
-            ],
+              );
+            },
           ),
         ),
       ),

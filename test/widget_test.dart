@@ -7,6 +7,7 @@ void main() {
     await tester.pumpWidget(const BrainyApp());
 
     expect(find.text('Good evening 👋'), findsOneWidget);
-    expect(find.text('Start'), findsOneWidget);
+    expect(find.text('Continue training'), findsOneWidget);
+    expect(find.text('Daily Challenge'), findsOneWidget);
   });
 }
