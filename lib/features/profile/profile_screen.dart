@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../xp/widgets/xp_badge.dart';
+import '../xp/widgets/xp_scope.dart';
+
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final xpController = XpScope.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -29,6 +33,13 @@ class ProfileScreen extends StatelessWidget {
             Text(
               'Your profile',
               style: theme.textTheme.headlineMedium,
+            ),
+            const SizedBox(height: 16),
+            ListenableBuilder(
+              listenable: xpController,
+              builder: (context, _) {
+                return XpBadge(total: xpController.total);
+              },
             ),
             const SizedBox(height: 8),
             Text(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../lesson/generators/lesson_generator.dart';
 import '../lesson/lesson_screen.dart';
+import '../xp/widgets/xp_badge.dart';
+import '../xp/widgets/xp_scope.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -9,6 +11,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final xpController = XpScope.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -18,11 +21,23 @@ class HomeScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              Text(
-                'Good evening 👋',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Good evening 👋',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                  ListenableBuilder(
+                    listenable: xpController,
+                    builder: (context, _) {
+                      return XpBadge(total: xpController.total);
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 8),
               Text(

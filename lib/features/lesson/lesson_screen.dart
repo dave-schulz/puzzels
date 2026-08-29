@@ -8,6 +8,9 @@ import '../puzzle/widgets/answer_list.dart';
 import '../puzzle/widgets/puzzle_feedback.dart';
 import '../puzzle/widgets/puzzle_progress.dart';
 import '../puzzle/widgets/puzzle_renderer.dart';
+import '../xp/widgets/xp_gain_animation.dart';
+import '../xp/widgets/xp_scope.dart';
+import '../xp/xp_calculator.dart';
 import 'lesson_result_screen.dart';
 import 'models/lesson.dart';
 import 'models/lesson_result.dart';
@@ -28,12 +31,13 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen>
     with SingleTickerProviderStateMixin {
-  static const _xpPerCorrect = 30;
-
   late int _puzzleIndex;
   int _correctCount = 0;
+  int _sessionXpEarned = 0;
   int _hearts = 5;
   int? _selectedIndex;
+  int? _xpGainAmount;
+  int _xpAnimationKey = 0;
   _PuzzleResult _result = _PuzzleResult.none;
   late final AnimationController _shakeController;
 
@@ -65,7 +69,14 @@ class _LessonScreenState extends State<LessonScreen>
     setState(() => _selectedIndex = index);
 
     if (index == _puzzle.correctIndex) {
-      setState(() => _result = _PuzzleResult.correct);
+      final reward = XpCalculator.rewardFor(_puzzle.difficulty);
+      XpScope.of(context).add(reward.amount);
+      setState(() {
+        _result = _PuzzleResult.correct;
+        _sessionXpEarned += reward.amount;
+        _xpGainAmount = reward.amount;
+        _xpAnimationKey++;
+      });
     } else {
       _shakeController.forward(from: 0);
       setState(() {
@@ -88,7 +99,7 @@ class _LessonScreenState extends State<LessonScreen>
     final result = LessonResult(
       correctCount: _correctCount,
       totalCount: widget.lesson.puzzleCount,
-      xpEarned: _correctCount * _xpPerCorrect,
+      xpEarned: _sessionXpEarned,
     );
 
     Navigator.of(context).pushReplacement(
@@ -111,6 +122,7 @@ class _LessonScreenState extends State<LessonScreen>
         _puzzleIndex++;
         _selectedIndex = null;
         _result = _PuzzleResult.none;
+        _xpGainAmount = null;
       });
       return;
     }
@@ -152,56 +164,69 @@ class _LessonScreenState extends State<LessonScreen>
           ),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: Stack(
+        alignment: Alignment.center,
         children: [
-          const SizedBox(height: 8),
-          PuzzleProgress(
-            total: widget.lesson.puzzleCount,
-            completed: _puzzleIndex,
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AnimatedBuilder(
-                    animation: _shakeController,
-                    builder: (context, child) {
-                      final shake = _shakeController.value;
-                      final offset = _result == _PuzzleResult.incorrect
-                          ? Offset(math.sin(shake * 4 * math.pi) * 8, 0)
-                          : Offset.zero;
-                      return Transform.translate(
-                        offset: offset,
-                        child: child,
-                      );
-                    },
-                    child: PuzzleRenderer(puzzle: _puzzle),
-                  ),
-                  const Spacer(),
-                  AnswerList(
-                    options: _puzzle.options,
-                    enabled: !_isAnswered,
-                    stateForIndex: _stateForIndex,
-                    onSelected: _selectAnswer,
-                  ),
-                ],
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 8),
+              PuzzleProgress(
+                total: widget.lesson.puzzleCount,
+                completed: _puzzleIndex,
               ),
-            ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AnimatedBuilder(
+                        animation: _shakeController,
+                        builder: (context, child) {
+                          final shake = _shakeController.value;
+                          final offset = _result == _PuzzleResult.incorrect
+                              ? Offset(math.sin(shake * 4 * math.pi) * 8, 0)
+                              : Offset.zero;
+                          return Transform.translate(
+                            offset: offset,
+                            child: child,
+                          );
+                        },
+                        child: PuzzleRenderer(puzzle: _puzzle),
+                      ),
+                      const Spacer(),
+                      AnswerList(
+                        options: _puzzle.options,
+                        enabled: !_isAnswered,
+                        stateForIndex: _stateForIndex,
+                        onSelected: _selectAnswer,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (_isAnswered)
+                PuzzleFeedback(
+                  type: _result == _PuzzleResult.correct
+                      ? FeedbackType.correct
+                      : FeedbackType.incorrect,
+                  correctAnswer: _puzzle.correctAnswer,
+                  continueLabel:
+                      _result == _PuzzleResult.correct && _isLastPuzzle
+                          ? 'Finish'
+                          : 'Continue',
+                  onContinue: _onContinue,
+                ),
+            ],
           ),
-          if (_isAnswered)
-            PuzzleFeedback(
-              type: _result == _PuzzleResult.correct
-                  ? FeedbackType.correct
-                  : FeedbackType.incorrect,
-              correctAnswer: _puzzle.correctAnswer,
-              continueLabel:
-                  _result == _PuzzleResult.correct && _isLastPuzzle
-                      ? 'Finish'
-                      : 'Continue',
-              onContinue: _onContinue,
+          if (_xpGainAmount != null)
+            Positioned(
+              bottom: 180,
+              child: XpGainAnimation(
+                key: ValueKey(_xpAnimationKey),
+                amount: _xpGainAmount!,
+              ),
             ),
         ],
       ),
