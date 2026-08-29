@@ -307,6 +307,42 @@ class $UserProgressTable extends UserProgress
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _sequenceSkillMeta = const VerificationMeta(
+    'sequenceSkill',
+  );
+  @override
+  late final GeneratedColumn<int> sequenceSkill = GeneratedColumn<int>(
+    'sequence_skill',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(50),
+  );
+  static const VerificationMeta _logicSkillMeta = const VerificationMeta(
+    'logicSkill',
+  );
+  @override
+  late final GeneratedColumn<int> logicSkill = GeneratedColumn<int>(
+    'logic_skill',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(50),
+  );
+  static const VerificationMeta _patternSkillMeta = const VerificationMeta(
+    'patternSkill',
+  );
+  @override
+  late final GeneratedColumn<int> patternSkill = GeneratedColumn<int>(
+    'pattern_skill',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(50),
+  );
   static const VerificationMeta _lastPlayDateMeta = const VerificationMeta(
     'lastPlayDate',
   );
@@ -334,6 +370,9 @@ class $UserProgressTable extends UserProgress
     userId,
     totalXp,
     streak,
+    sequenceSkill,
+    logicSkill,
+    patternSkill,
     lastPlayDate,
     updatedAt,
   ];
@@ -367,6 +406,30 @@ class $UserProgressTable extends UserProgress
       context.handle(
         _streakMeta,
         streak.isAcceptableOrUnknown(data['streak']!, _streakMeta),
+      );
+    }
+    if (data.containsKey('sequence_skill')) {
+      context.handle(
+        _sequenceSkillMeta,
+        sequenceSkill.isAcceptableOrUnknown(
+          data['sequence_skill']!,
+          _sequenceSkillMeta,
+        ),
+      );
+    }
+    if (data.containsKey('logic_skill')) {
+      context.handle(
+        _logicSkillMeta,
+        logicSkill.isAcceptableOrUnknown(data['logic_skill']!, _logicSkillMeta),
+      );
+    }
+    if (data.containsKey('pattern_skill')) {
+      context.handle(
+        _patternSkillMeta,
+        patternSkill.isAcceptableOrUnknown(
+          data['pattern_skill']!,
+          _patternSkillMeta,
+        ),
       );
     }
     if (data.containsKey('last_play_date')) {
@@ -407,6 +470,18 @@ class $UserProgressTable extends UserProgress
         DriftSqlType.int,
         data['${effectivePrefix}streak'],
       )!,
+      sequenceSkill: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}sequence_skill'],
+      )!,
+      logicSkill: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}logic_skill'],
+      )!,
+      patternSkill: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}pattern_skill'],
+      )!,
       lastPlayDate: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}last_play_date'],
@@ -429,12 +504,18 @@ class UserProgressData extends DataClass
   final String userId;
   final int totalXp;
   final int streak;
+  final int sequenceSkill;
+  final int logicSkill;
+  final int patternSkill;
   final DateTime? lastPlayDate;
   final DateTime updatedAt;
   const UserProgressData({
     required this.userId,
     required this.totalXp,
     required this.streak,
+    required this.sequenceSkill,
+    required this.logicSkill,
+    required this.patternSkill,
     this.lastPlayDate,
     required this.updatedAt,
   });
@@ -444,6 +525,9 @@ class UserProgressData extends DataClass
     map['user_id'] = Variable<String>(userId);
     map['total_xp'] = Variable<int>(totalXp);
     map['streak'] = Variable<int>(streak);
+    map['sequence_skill'] = Variable<int>(sequenceSkill);
+    map['logic_skill'] = Variable<int>(logicSkill);
+    map['pattern_skill'] = Variable<int>(patternSkill);
     if (!nullToAbsent || lastPlayDate != null) {
       map['last_play_date'] = Variable<DateTime>(lastPlayDate);
     }
@@ -456,6 +540,9 @@ class UserProgressData extends DataClass
       userId: Value(userId),
       totalXp: Value(totalXp),
       streak: Value(streak),
+      sequenceSkill: Value(sequenceSkill),
+      logicSkill: Value(logicSkill),
+      patternSkill: Value(patternSkill),
       lastPlayDate: lastPlayDate == null && nullToAbsent
           ? const Value.absent()
           : Value(lastPlayDate),
@@ -472,6 +559,9 @@ class UserProgressData extends DataClass
       userId: serializer.fromJson<String>(json['userId']),
       totalXp: serializer.fromJson<int>(json['totalXp']),
       streak: serializer.fromJson<int>(json['streak']),
+      sequenceSkill: serializer.fromJson<int>(json['sequenceSkill']),
+      logicSkill: serializer.fromJson<int>(json['logicSkill']),
+      patternSkill: serializer.fromJson<int>(json['patternSkill']),
       lastPlayDate: serializer.fromJson<DateTime?>(json['lastPlayDate']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -483,6 +573,9 @@ class UserProgressData extends DataClass
       'userId': serializer.toJson<String>(userId),
       'totalXp': serializer.toJson<int>(totalXp),
       'streak': serializer.toJson<int>(streak),
+      'sequenceSkill': serializer.toJson<int>(sequenceSkill),
+      'logicSkill': serializer.toJson<int>(logicSkill),
+      'patternSkill': serializer.toJson<int>(patternSkill),
       'lastPlayDate': serializer.toJson<DateTime?>(lastPlayDate),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -492,12 +585,18 @@ class UserProgressData extends DataClass
     String? userId,
     int? totalXp,
     int? streak,
+    int? sequenceSkill,
+    int? logicSkill,
+    int? patternSkill,
     Value<DateTime?> lastPlayDate = const Value.absent(),
     DateTime? updatedAt,
   }) => UserProgressData(
     userId: userId ?? this.userId,
     totalXp: totalXp ?? this.totalXp,
     streak: streak ?? this.streak,
+    sequenceSkill: sequenceSkill ?? this.sequenceSkill,
+    logicSkill: logicSkill ?? this.logicSkill,
+    patternSkill: patternSkill ?? this.patternSkill,
     lastPlayDate: lastPlayDate.present ? lastPlayDate.value : this.lastPlayDate,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -506,6 +605,15 @@ class UserProgressData extends DataClass
       userId: data.userId.present ? data.userId.value : this.userId,
       totalXp: data.totalXp.present ? data.totalXp.value : this.totalXp,
       streak: data.streak.present ? data.streak.value : this.streak,
+      sequenceSkill: data.sequenceSkill.present
+          ? data.sequenceSkill.value
+          : this.sequenceSkill,
+      logicSkill: data.logicSkill.present
+          ? data.logicSkill.value
+          : this.logicSkill,
+      patternSkill: data.patternSkill.present
+          ? data.patternSkill.value
+          : this.patternSkill,
       lastPlayDate: data.lastPlayDate.present
           ? data.lastPlayDate.value
           : this.lastPlayDate,
@@ -519,6 +627,9 @@ class UserProgressData extends DataClass
           ..write('userId: $userId, ')
           ..write('totalXp: $totalXp, ')
           ..write('streak: $streak, ')
+          ..write('sequenceSkill: $sequenceSkill, ')
+          ..write('logicSkill: $logicSkill, ')
+          ..write('patternSkill: $patternSkill, ')
           ..write('lastPlayDate: $lastPlayDate, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -526,8 +637,16 @@ class UserProgressData extends DataClass
   }
 
   @override
-  int get hashCode =>
-      Object.hash(userId, totalXp, streak, lastPlayDate, updatedAt);
+  int get hashCode => Object.hash(
+    userId,
+    totalXp,
+    streak,
+    sequenceSkill,
+    logicSkill,
+    patternSkill,
+    lastPlayDate,
+    updatedAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -535,6 +654,9 @@ class UserProgressData extends DataClass
           other.userId == this.userId &&
           other.totalXp == this.totalXp &&
           other.streak == this.streak &&
+          other.sequenceSkill == this.sequenceSkill &&
+          other.logicSkill == this.logicSkill &&
+          other.patternSkill == this.patternSkill &&
           other.lastPlayDate == this.lastPlayDate &&
           other.updatedAt == this.updatedAt);
 }
@@ -543,6 +665,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
   final Value<String> userId;
   final Value<int> totalXp;
   final Value<int> streak;
+  final Value<int> sequenceSkill;
+  final Value<int> logicSkill;
+  final Value<int> patternSkill;
   final Value<DateTime?> lastPlayDate;
   final Value<DateTime> updatedAt;
   final Value<int> rowid;
@@ -550,6 +675,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
     this.userId = const Value.absent(),
     this.totalXp = const Value.absent(),
     this.streak = const Value.absent(),
+    this.sequenceSkill = const Value.absent(),
+    this.logicSkill = const Value.absent(),
+    this.patternSkill = const Value.absent(),
     this.lastPlayDate = const Value.absent(),
     this.updatedAt = const Value.absent(),
     this.rowid = const Value.absent(),
@@ -558,6 +686,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
     required String userId,
     this.totalXp = const Value.absent(),
     this.streak = const Value.absent(),
+    this.sequenceSkill = const Value.absent(),
+    this.logicSkill = const Value.absent(),
+    this.patternSkill = const Value.absent(),
     this.lastPlayDate = const Value.absent(),
     required DateTime updatedAt,
     this.rowid = const Value.absent(),
@@ -567,6 +698,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
     Expression<String>? userId,
     Expression<int>? totalXp,
     Expression<int>? streak,
+    Expression<int>? sequenceSkill,
+    Expression<int>? logicSkill,
+    Expression<int>? patternSkill,
     Expression<DateTime>? lastPlayDate,
     Expression<DateTime>? updatedAt,
     Expression<int>? rowid,
@@ -575,6 +709,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
       if (userId != null) 'user_id': userId,
       if (totalXp != null) 'total_xp': totalXp,
       if (streak != null) 'streak': streak,
+      if (sequenceSkill != null) 'sequence_skill': sequenceSkill,
+      if (logicSkill != null) 'logic_skill': logicSkill,
+      if (patternSkill != null) 'pattern_skill': patternSkill,
       if (lastPlayDate != null) 'last_play_date': lastPlayDate,
       if (updatedAt != null) 'updated_at': updatedAt,
       if (rowid != null) 'rowid': rowid,
@@ -585,6 +722,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
     Value<String>? userId,
     Value<int>? totalXp,
     Value<int>? streak,
+    Value<int>? sequenceSkill,
+    Value<int>? logicSkill,
+    Value<int>? patternSkill,
     Value<DateTime?>? lastPlayDate,
     Value<DateTime>? updatedAt,
     Value<int>? rowid,
@@ -593,6 +733,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
       userId: userId ?? this.userId,
       totalXp: totalXp ?? this.totalXp,
       streak: streak ?? this.streak,
+      sequenceSkill: sequenceSkill ?? this.sequenceSkill,
+      logicSkill: logicSkill ?? this.logicSkill,
+      patternSkill: patternSkill ?? this.patternSkill,
       lastPlayDate: lastPlayDate ?? this.lastPlayDate,
       updatedAt: updatedAt ?? this.updatedAt,
       rowid: rowid ?? this.rowid,
@@ -610,6 +753,15 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
     }
     if (streak.present) {
       map['streak'] = Variable<int>(streak.value);
+    }
+    if (sequenceSkill.present) {
+      map['sequence_skill'] = Variable<int>(sequenceSkill.value);
+    }
+    if (logicSkill.present) {
+      map['logic_skill'] = Variable<int>(logicSkill.value);
+    }
+    if (patternSkill.present) {
+      map['pattern_skill'] = Variable<int>(patternSkill.value);
     }
     if (lastPlayDate.present) {
       map['last_play_date'] = Variable<DateTime>(lastPlayDate.value);
@@ -629,6 +781,9 @@ class UserProgressCompanion extends UpdateCompanion<UserProgressData> {
           ..write('userId: $userId, ')
           ..write('totalXp: $totalXp, ')
           ..write('streak: $streak, ')
+          ..write('sequenceSkill: $sequenceSkill, ')
+          ..write('logicSkill: $logicSkill, ')
+          ..write('patternSkill: $patternSkill, ')
           ..write('lastPlayDate: $lastPlayDate, ')
           ..write('updatedAt: $updatedAt, ')
           ..write('rowid: $rowid')
@@ -2040,6 +2195,9 @@ typedef $$UserProgressTableCreateCompanionBuilder =
       required String userId,
       Value<int> totalXp,
       Value<int> streak,
+      Value<int> sequenceSkill,
+      Value<int> logicSkill,
+      Value<int> patternSkill,
       Value<DateTime?> lastPlayDate,
       required DateTime updatedAt,
       Value<int> rowid,
@@ -2049,6 +2207,9 @@ typedef $$UserProgressTableUpdateCompanionBuilder =
       Value<String> userId,
       Value<int> totalXp,
       Value<int> streak,
+      Value<int> sequenceSkill,
+      Value<int> logicSkill,
+      Value<int> patternSkill,
       Value<DateTime?> lastPlayDate,
       Value<DateTime> updatedAt,
       Value<int> rowid,
@@ -2093,6 +2254,21 @@ class $$UserProgressTableFilterComposer
 
   ColumnFilters<int> get streak => $composableBuilder(
     column: $table.streak,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get sequenceSkill => $composableBuilder(
+    column: $table.sequenceSkill,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get logicSkill => $composableBuilder(
+    column: $table.logicSkill,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get patternSkill => $composableBuilder(
+    column: $table.patternSkill,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -2149,6 +2325,21 @@ class $$UserProgressTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<int> get sequenceSkill => $composableBuilder(
+    column: $table.sequenceSkill,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get logicSkill => $composableBuilder(
+    column: $table.logicSkill,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get patternSkill => $composableBuilder(
+    column: $table.patternSkill,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get lastPlayDate => $composableBuilder(
     column: $table.lastPlayDate,
     builder: (column) => ColumnOrderings(column),
@@ -2197,6 +2388,21 @@ class $$UserProgressTableAnnotationComposer
 
   GeneratedColumn<int> get streak =>
       $composableBuilder(column: $table.streak, builder: (column) => column);
+
+  GeneratedColumn<int> get sequenceSkill => $composableBuilder(
+    column: $table.sequenceSkill,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get logicSkill => $composableBuilder(
+    column: $table.logicSkill,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get patternSkill => $composableBuilder(
+    column: $table.patternSkill,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<DateTime> get lastPlayDate => $composableBuilder(
     column: $table.lastPlayDate,
@@ -2261,6 +2467,9 @@ class $$UserProgressTableTableManager
                 Value<String> userId = const Value.absent(),
                 Value<int> totalXp = const Value.absent(),
                 Value<int> streak = const Value.absent(),
+                Value<int> sequenceSkill = const Value.absent(),
+                Value<int> logicSkill = const Value.absent(),
+                Value<int> patternSkill = const Value.absent(),
                 Value<DateTime?> lastPlayDate = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
@@ -2268,6 +2477,9 @@ class $$UserProgressTableTableManager
                 userId: userId,
                 totalXp: totalXp,
                 streak: streak,
+                sequenceSkill: sequenceSkill,
+                logicSkill: logicSkill,
+                patternSkill: patternSkill,
                 lastPlayDate: lastPlayDate,
                 updatedAt: updatedAt,
                 rowid: rowid,
@@ -2277,6 +2489,9 @@ class $$UserProgressTableTableManager
                 required String userId,
                 Value<int> totalXp = const Value.absent(),
                 Value<int> streak = const Value.absent(),
+                Value<int> sequenceSkill = const Value.absent(),
+                Value<int> logicSkill = const Value.absent(),
+                Value<int> patternSkill = const Value.absent(),
                 Value<DateTime?> lastPlayDate = const Value.absent(),
                 required DateTime updatedAt,
                 Value<int> rowid = const Value.absent(),
@@ -2284,6 +2499,9 @@ class $$UserProgressTableTableManager
                 userId: userId,
                 totalXp: totalXp,
                 streak: streak,
+                sequenceSkill: sequenceSkill,
+                logicSkill: logicSkill,
+                patternSkill: patternSkill,
                 lastPlayDate: lastPlayDate,
                 updatedAt: updatedAt,
                 rowid: rowid,

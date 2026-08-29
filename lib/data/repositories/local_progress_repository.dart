@@ -35,6 +35,9 @@ class LocalProgressRepository implements ProgressRepository {
       streak: row.streak,
       lastPlayDate: row.lastPlayDate,
       updatedAt: row.updatedAt,
+      sequenceSkill: row.sequenceSkill,
+      logicSkill: row.logicSkill,
+      patternSkill: row.patternSkill,
     );
   }
 
@@ -44,6 +47,9 @@ class LocalProgressRepository implements ProgressRepository {
     required int totalXp,
     required int streak,
     DateTime? lastPlayDate,
+    required int sequenceSkill,
+    required int logicSkill,
+    required int patternSkill,
   }) async {
     await _database.into(_database.userProgress).insertOnConflictUpdate(
           UserProgressCompanion(
@@ -51,6 +57,9 @@ class LocalProgressRepository implements ProgressRepository {
             totalXp: Value(totalXp),
             streak: Value(streak),
             lastPlayDate: Value(lastPlayDate),
+            sequenceSkill: Value(sequenceSkill),
+            logicSkill: Value(logicSkill),
+            patternSkill: Value(patternSkill),
             updatedAt: Value(DateTime.now()),
           ),
         );

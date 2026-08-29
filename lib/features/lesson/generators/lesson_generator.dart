@@ -3,6 +3,8 @@ import '../../puzzle/generators/pattern_generator.dart';
 import '../../puzzle/generators/sequence_generator.dart';
 import '../../puzzle/models/puzzle.dart';
 import '../../puzzle/models/puzzle_difficulty.dart';
+import '../../skill/models/user_skills.dart';
+import '../../skill/skill_calculator.dart';
 import '../models/lesson.dart';
 
 enum LessonPuzzleKind {
@@ -57,8 +59,36 @@ class LessonGenerator {
     ),
   ];
 
-  Lesson generate({String title = 'Logic Training'}) {
-    final puzzles = generatePuzzles();
+  static const adaptiveKinds = <LessonPuzzleKind>[
+    LessonPuzzleKind.sequence,
+    LessonPuzzleKind.pattern,
+    LessonPuzzleKind.logic,
+    LessonPuzzleKind.sequence,
+    LessonPuzzleKind.sequence,
+  ];
+
+  static List<LessonPuzzlePlan> planForSkills(UserSkills skills) {
+    return [
+      for (final kind in adaptiveKinds)
+        LessonPuzzlePlan(
+          kind: kind,
+          difficulty: switch (kind) {
+            LessonPuzzleKind.sequence =>
+              SkillCalculator.difficultyFor(skills.sequence),
+            LessonPuzzleKind.logic =>
+              SkillCalculator.difficultyFor(skills.logic),
+            LessonPuzzleKind.pattern =>
+              SkillCalculator.difficultyFor(skills.pattern),
+          },
+        ),
+    ];
+  }
+
+  Lesson generate({
+    String title = 'Logic Training',
+    UserSkills skills = UserSkills.defaults,
+  }) {
+    final puzzles = generatePuzzles(plan: planForSkills(skills));
 
     return Lesson(
       id: 'lesson-${DateTime.now().microsecondsSinceEpoch}',

@@ -7,6 +7,7 @@ import 'package:brainy/providers/database_provider.dart';
 import 'package:brainy/providers/lesson_provider.dart';
 import 'package:brainy/providers/progress_persistence.dart';
 import 'package:brainy/providers/puzzle_provider.dart';
+import 'package:brainy/providers/skills_provider.dart';
 import 'package:brainy/providers/streak_provider.dart';
 import 'package:brainy/providers/user_provider.dart';
 import 'package:brainy/providers/xp_provider.dart';
@@ -25,6 +26,9 @@ void main() {
         totalXp: 120,
         streak: 2,
         lastPlayDate: DateTime(2026, 8, 29),
+        sequenceSkill: 65,
+        logicSkill: 40,
+        patternSkill: 75,
       );
 
       final container = ProviderContainer(
@@ -39,6 +43,9 @@ void main() {
       expect(container.read(userProfileProvider).displayName, defaultDisplayName);
       expect(container.read(xpProvider), 120);
       expect(container.read(streakProvider).streak, 2);
+      expect(container.read(skillsProvider).sequence, 65);
+      expect(container.read(skillsProvider).logic, 40);
+      expect(container.read(skillsProvider).pattern, 75);
     });
 
     test('adding XP persists to local database', () async {

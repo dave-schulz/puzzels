@@ -40,6 +40,9 @@ void main() {
       expect(progress, isNotNull);
       expect(progress!.totalXp, 0);
       expect(progress.streak, 0);
+      expect(progress.sequenceSkill, 50);
+      expect(progress.logicSkill, 50);
+      expect(progress.patternSkill, 50);
     });
 
     test('persists and reads user progress', () async {
@@ -53,6 +56,9 @@ void main() {
         totalXp: 120,
         streak: 3,
         lastPlayDate: lastPlayDate,
+        sequenceSkill: 55,
+        logicSkill: 60,
+        patternSkill: 45,
       );
 
       final progress = await repository.getProgress(localUserId);
@@ -60,6 +66,9 @@ void main() {
       expect(progress!.totalXp, 120);
       expect(progress.streak, 3);
       expect(progress.lastPlayDate, lastPlayDate);
+      expect(progress.sequenceSkill, 55);
+      expect(progress.logicSkill, 60);
+      expect(progress.patternSkill, 45);
     });
 
     test('records puzzle attempts', () async {

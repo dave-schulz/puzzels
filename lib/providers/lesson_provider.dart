@@ -11,6 +11,7 @@ import '../features/puzzle/models/puzzle.dart';
 import '../features/xp/xp_calculator.dart';
 import 'database_provider.dart';
 import 'puzzle_provider.dart';
+import 'skills_provider.dart';
 import 'streak_provider.dart';
 import 'user_provider.dart';
 import 'xp_provider.dart';
@@ -39,6 +40,11 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
       final reward = XpCalculator.rewardFor(puzzle.difficulty);
       final levelUp = ref.read(xpProvider.notifier).add(reward.amount);
 
+      ref.read(skillsProvider.notifier).recordAttempt(
+            puzzle,
+            isCorrect: true,
+          );
+
       unawaited(_recordAttempt(
         puzzle: puzzle,
         isCorrect: true,
@@ -54,6 +60,11 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
       );
       return levelUp;
     }
+
+    ref.read(skillsProvider.notifier).recordAttempt(
+          puzzle,
+          isCorrect: false,
+        );
 
     unawaited(_recordAttempt(
       puzzle: puzzle,

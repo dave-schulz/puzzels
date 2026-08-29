@@ -5,6 +5,9 @@ class StoredUserProgress {
     required this.streak,
     required this.lastPlayDate,
     required this.updatedAt,
+    required this.sequenceSkill,
+    required this.logicSkill,
+    required this.patternSkill,
   });
 
   final String userId;
@@ -12,6 +15,9 @@ class StoredUserProgress {
   final int streak;
   final DateTime? lastPlayDate;
   final DateTime updatedAt;
+  final int sequenceSkill;
+  final int logicSkill;
+  final int patternSkill;
 }
 
 class StoredAttempt {

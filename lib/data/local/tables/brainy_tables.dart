@@ -18,6 +18,12 @@ class UserProgress extends Table {
 
   IntColumn get streak => integer().withDefault(const Constant(0))();
 
+  IntColumn get sequenceSkill => integer().withDefault(const Constant(50))();
+
+  IntColumn get logicSkill => integer().withDefault(const Constant(50))();
+
+  IntColumn get patternSkill => integer().withDefault(const Constant(50))();
+
   DateTimeColumn get lastPlayDate => dateTime().nullable()();
 
   DateTimeColumn get updatedAt => dateTime()();

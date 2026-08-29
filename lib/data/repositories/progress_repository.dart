@@ -13,6 +13,9 @@ abstract class ProgressRepository {
     required int totalXp,
     required int streak,
     DateTime? lastPlayDate,
+    required int sequenceSkill,
+    required int logicSkill,
+    required int patternSkill,
   });
 
   Future<void> recordAttempt({

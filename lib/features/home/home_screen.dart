@@ -5,6 +5,7 @@ import '../lesson/lesson_screen.dart';
 import '../../providers/home_provider.dart';
 import '../../providers/lesson_provider.dart';
 import '../../providers/puzzle_provider.dart';
+import '../../providers/skills_provider.dart';
 import 'home_greeting.dart';
 import 'widgets/continue_training_card.dart';
 import 'widgets/daily_challenge_card.dart';
@@ -43,7 +44,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
   }
 
   void _startLesson() {
-    final lesson = ref.read(lessonGeneratorProvider).generate();
+    final skills = ref.read(skillsProvider);
+    final lesson = ref.read(lessonGeneratorProvider).generate(skills: skills);
     ref.read(lessonSessionProvider.notifier).start(lesson);
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
