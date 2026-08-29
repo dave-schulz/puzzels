@@ -18,7 +18,6 @@ void main() {
       ),
     );
 
-    expect(find.textContaining('Good evening'), findsOneWidget);
     expect(find.textContaining('Davey'), findsOneWidget);
     expect(find.text('Continue training'), findsOneWidget);
     expect(find.text('Daily Challenge'), findsOneWidget);

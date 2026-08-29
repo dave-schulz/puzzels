@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/streak/streak_calculator.dart';
+import 'progress_persistence.dart';
 
 class StreakData {
   const StreakData({
@@ -15,6 +16,13 @@ class StreakData {
 class StreakNotifier extends Notifier<StreakData> {
   @override
   StreakData build() => const StreakData(streak: 0);
+
+  void restore({
+    required int streak,
+    DateTime? lastPlayDate,
+  }) {
+    state = StreakData(streak: streak, lastPlayDate: lastPlayDate);
+  }
 
   bool playedToday([DateTime? now]) {
     return StreakCalculator.playedToday(
@@ -34,6 +42,8 @@ class StreakNotifier extends Notifier<StreakData> {
       streak: update.streak,
       lastPlayDate: update.lastPlayDate,
     );
+
+    persistStreakProgress(ref, state);
   }
 }
 
