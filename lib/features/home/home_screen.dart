@@ -36,8 +36,7 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () {
-                    final puzzles =
-                        SequenceGenerator().generateSession(count: 5);
+                    final puzzles = SequenceGenerator().generateSession();
                     Navigator.of(context).push<void>(
                       MaterialPageRoute<void>(
                         builder: (context) => PuzzleScreen(puzzles: puzzles),

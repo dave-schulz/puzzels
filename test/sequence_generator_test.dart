@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:brainy/features/puzzle/generators/sequence_generator.dart';
 import 'package:brainy/features/puzzle/generators/sequence_pattern.dart';
+import 'package:brainy/features/puzzle/models/puzzle_difficulty.dart';
 import 'package:brainy/features/puzzle/models/puzzle_type.dart';
 
 void main() {
@@ -21,48 +22,93 @@ void main() {
   });
 
   group('SequenceGenerator', () {
-    test('generates valid +2 sequence puzzle', () {
+    test('generates valid sequence puzzle', () {
       final generator = SequenceGenerator(random: Random(1));
-
-      final puzzle = generator.generate();
+      final puzzle = generator.generate(difficulty: PuzzleDifficulty.easy);
 
       expect(puzzle.type, PuzzleType.sequence);
+      expect(puzzle.difficulty, PuzzleDifficulty.easy);
       expect(puzzle.sequence?.last, '?');
       expect(puzzle.options, hasLength(4));
-      expect(
-        puzzle.options[puzzle.correctIndex],
-        puzzle.correctAnswer,
-      );
+      expect(puzzle.options[puzzle.correctIndex], puzzle.correctAnswer);
     });
 
-    test('example +2 sequence produces expected answer', () {
-      final generator = SequenceGenerator(random: Random(42));
-      final puzzle = generator.generate();
+    test('generateSession follows default difficulty curve', () {
+      final generator = SequenceGenerator(random: Random(0));
+      final session = generator.generateSession();
 
-      if (puzzle.sequence!.contains('7') &&
-          puzzle.sequence!.contains('9') &&
-          puzzle.sequence!.contains('11') &&
-          puzzle.sequence!.contains('13')) {
-        expect(puzzle.correctAnswer, '15');
+      expect(session, hasLength(5));
+      expect(session[0].difficulty, PuzzleDifficulty.easy);
+      expect(session[1].difficulty, PuzzleDifficulty.easy);
+      expect(session[2].difficulty, PuzzleDifficulty.medium);
+      expect(session[3].difficulty, PuzzleDifficulty.medium);
+      expect(session[4].difficulty, PuzzleDifficulty.hard);
+    });
+
+    test('easy puzzles only use easy patterns', () {
+      final generator = SequenceGenerator(random: Random(0));
+      const easyPatterns = {SequencePattern.add1, SequencePattern.add2};
+
+      for (var i = 0; i < 30; i++) {
+        final puzzle = generator.generate(difficulty: PuzzleDifficulty.easy);
+        final values = puzzle.sequence!
+            .where((value) => value != '?')
+            .map(int.parse)
+            .toList();
+        expect(_detectPattern(values), isIn(easyPatterns));
       }
     });
 
-    test('generateSession returns requested count', () {
+    test('hard puzzles only use hard patterns', () {
       final generator = SequenceGenerator(random: Random(0));
-      final session = generator.generateSession(count: 5);
+      const hardPatterns = {SequencePattern.multiply2, SequencePattern.multiply3};
 
-      expect(session, hasLength(5));
-      expect(session.every((puzzle) => puzzle.type == PuzzleType.sequence), true);
+      for (var i = 0; i < 30; i++) {
+        final puzzle = generator.generate(difficulty: PuzzleDifficulty.hard);
+        final values = puzzle.sequence!
+            .where((value) => value != '?')
+            .map(int.parse)
+            .toList();
+        expect(_detectPattern(values), isIn(hardPatterns));
+      }
     });
 
     test('options are unique and include correct answer', () {
       final generator = SequenceGenerator(random: Random(99));
 
-      for (var i = 0; i < 20; i++) {
-        final puzzle = generator.generate();
-        expect(puzzle.options.toSet(), hasLength(4));
-        expect(puzzle.options, contains(puzzle.correctAnswer));
+      for (final difficulty in PuzzleDifficulty.values) {
+        for (var i = 0; i < 10; i++) {
+          final puzzle = generator.generate(difficulty: difficulty);
+          expect(puzzle.options.toSet(), hasLength(4));
+          expect(puzzle.options, contains(puzzle.correctAnswer));
+        }
       }
     });
   });
+}
+
+SequencePattern? _detectPattern(List<int> values) {
+  if (values.length < 2) return null;
+
+  final addStep = values[1] - values[0];
+  final isAdd = List.generate(values.length - 1, (index) {
+    return values[index + 1] - values[index] == addStep;
+  }).every((matches) => matches);
+
+  if (isAdd && addStep == 1) return SequencePattern.add1;
+  if (isAdd && addStep == 2) return SequencePattern.add2;
+  if (isAdd && addStep == 3) return SequencePattern.add3;
+
+  final isMultiply = List.generate(values.length - 1, (index) {
+    return values[index] != 0 && values[index + 1] % values[index] == 0;
+  }).every((matches) => matches);
+
+  if (isMultiply && values[1] ~/ values[0] == 2) {
+    return SequencePattern.multiply2;
+  }
+  if (isMultiply && values[1] ~/ values[0] == 3) {
+    return SequencePattern.multiply3;
+  }
+
+  return null;
 }

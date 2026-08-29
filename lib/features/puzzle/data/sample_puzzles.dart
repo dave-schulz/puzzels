@@ -1,10 +1,12 @@
 import '../models/puzzle.dart';
+import '../models/puzzle_difficulty.dart';
 import '../models/puzzle_type.dart';
 
 const samplePuzzles = <Puzzle>[
   Puzzle(
     id: 'sequence-1',
     type: PuzzleType.sequence,
+    difficulty: PuzzleDifficulty.easy,
     prompt: 'What comes next?',
     sequence: ['2', '4', '6', '?'],
     options: ['8', '10', '12', '14'],
@@ -13,6 +15,7 @@ const samplePuzzles = <Puzzle>[
   Puzzle(
     id: 'sequence-2',
     type: PuzzleType.sequence,
+    difficulty: PuzzleDifficulty.medium,
     prompt: 'What comes next?',
     sequence: ['3', '6', '12', '?'],
     options: ['18', '24', '15', '20'],
@@ -21,6 +24,7 @@ const samplePuzzles = <Puzzle>[
   Puzzle(
     id: 'logic-1',
     type: PuzzleType.multipleChoice,
+    difficulty: PuzzleDifficulty.medium,
     prompt: 'Who is shortest?',
     statements: [
       'Tom is taller than Lisa.',
