@@ -1,3 +1,4 @@
+import 'pattern_grid.dart';
 import 'puzzle_difficulty.dart';
 import 'puzzle_type.dart';
 
@@ -11,6 +12,7 @@ class Puzzle {
     required this.correctIndex,
     this.sequence,
     this.statements,
+    this.patternGrid,
   });
 
   final String id;
@@ -21,6 +23,7 @@ class Puzzle {
   final int correctIndex;
   final List<String>? sequence;
   final List<String>? statements;
+  final PatternGrid? patternGrid;
 
   String get correctAnswer => options[correctIndex];
 }

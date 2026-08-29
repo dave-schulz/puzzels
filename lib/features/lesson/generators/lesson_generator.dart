@@ -1,4 +1,5 @@
 import '../../puzzle/generators/logic_puzzle_generator.dart';
+import '../../puzzle/generators/pattern_generator.dart';
 import '../../puzzle/generators/sequence_generator.dart';
 import '../../puzzle/models/puzzle.dart';
 import '../../puzzle/models/puzzle_difficulty.dart';
@@ -7,6 +8,7 @@ import '../models/lesson.dart';
 enum LessonPuzzleKind {
   sequence,
   logic,
+  pattern,
 }
 
 class LessonPuzzlePlan {
@@ -23,11 +25,14 @@ class LessonGenerator {
   LessonGenerator({
     SequenceGenerator? sequenceGenerator,
     LogicPuzzleGenerator? logicGenerator,
+    PatternGenerator? patternGenerator,
   })  : _sequenceGenerator = sequenceGenerator ?? SequenceGenerator(),
-        _logicGenerator = logicGenerator ?? LogicPuzzleGenerator();
+        _logicGenerator = logicGenerator ?? LogicPuzzleGenerator(),
+        _patternGenerator = patternGenerator ?? PatternGenerator();
 
   final SequenceGenerator _sequenceGenerator;
   final LogicPuzzleGenerator _logicGenerator;
+  final PatternGenerator _patternGenerator;
 
   static const defaultPlan = <LessonPuzzlePlan>[
     LessonPuzzlePlan(
@@ -35,7 +40,7 @@ class LessonGenerator {
       difficulty: PuzzleDifficulty.easy,
     ),
     LessonPuzzlePlan(
-      kind: LessonPuzzleKind.sequence,
+      kind: LessonPuzzleKind.pattern,
       difficulty: PuzzleDifficulty.easy,
     ),
     LessonPuzzlePlan(
@@ -74,6 +79,8 @@ class LessonGenerator {
         _sequenceGenerator.generate(difficulty: plan.difficulty),
       LessonPuzzleKind.logic =>
         _logicGenerator.generate(difficulty: plan.difficulty),
+      LessonPuzzleKind.pattern =>
+        _patternGenerator.generate(difficulty: plan.difficulty),
     };
   }
 }

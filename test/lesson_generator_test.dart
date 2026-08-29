@@ -11,12 +11,13 @@ void main() {
       expect(lesson.puzzles, hasLength(5));
     });
 
-    test('includes logic and sequence puzzles', () {
+    test('includes sequence, logic, and pattern puzzles', () {
       final lesson = LessonGenerator().generate();
       final types = lesson.puzzles.map((puzzle) => puzzle.type).toSet();
 
       expect(types, contains(PuzzleType.sequence));
       expect(types, contains(PuzzleType.multipleChoice));
+      expect(types, contains(PuzzleType.pattern));
     });
   });
 }

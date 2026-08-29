@@ -197,21 +197,28 @@ class _LessonScreenState extends State<LessonScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      AnimatedBuilder(
-                        animation: _shakeController,
-                        builder: (context, child) {
-                          final shake = _shakeController.value;
-                          final offset = _result == _PuzzleResult.incorrect
-                              ? Offset(math.sin(shake * 4 * math.pi) * 8, 0)
-                              : Offset.zero;
-                          return Transform.translate(
-                            offset: offset,
-                            child: child,
-                          );
-                        },
-                        child: PuzzleRenderer(puzzle: _puzzle),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: AnimatedBuilder(
+                            animation: _shakeController,
+                            builder: (context, child) {
+                              final shake = _shakeController.value;
+                              final offset = _result == _PuzzleResult.incorrect
+                                  ? Offset(
+                                      math.sin(shake * 4 * math.pi) * 8,
+                                      0,
+                                    )
+                                  : Offset.zero;
+                              return Transform.translate(
+                                offset: offset,
+                                child: child,
+                              );
+                            },
+                            child: PuzzleRenderer(puzzle: _puzzle),
+                          ),
+                        ),
                       ),
-                      const Spacer(),
+                      const SizedBox(height: 16),
                       AnswerList(
                         options: _puzzle.options,
                         enabled: !_isAnswered,
