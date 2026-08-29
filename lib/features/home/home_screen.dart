@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../puzzle/generators/sequence_generator.dart';
-import '../puzzle/puzzle_screen.dart';
+import '../lesson/generators/lesson_generator.dart';
+import '../lesson/lesson_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,7 +26,7 @@ class HomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                'Ready for your first puzzle?',
+                'Ready for your first lesson?',
                 style: theme.textTheme.bodyLarge?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
@@ -36,10 +36,10 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () {
-                    final puzzles = SequenceGenerator().generateSession();
+                    final lesson = LessonGenerator().generate();
                     Navigator.of(context).push<void>(
                       MaterialPageRoute<void>(
-                        builder: (context) => PuzzleScreen(puzzles: puzzles),
+                        builder: (context) => LessonScreen(lesson: lesson),
                       ),
                     );
                   },

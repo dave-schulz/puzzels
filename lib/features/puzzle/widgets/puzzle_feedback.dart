@@ -8,11 +8,13 @@ class PuzzleFeedback extends StatelessWidget {
     required this.type,
     required this.onContinue,
     this.correctAnswer,
+    this.continueLabel = 'Continue',
   });
 
   final FeedbackType type;
   final VoidCallback onContinue;
   final String? correctAnswer;
+  final String continueLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +65,7 @@ class PuzzleFeedback extends StatelessWidget {
                   foregroundColor: theme.colorScheme.secondary,
                 ),
                 onPressed: onContinue,
-                child: const Text('Continue'),
+                child: Text(continueLabel),
               ),
             ),
           ],
