@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../local/app_database.dart';
+import '../models/stored_daily_challenge.dart';
 import '../models/stored_progress.dart';
 import '../models/stored_user.dart';
 import 'progress_repository.dart';
@@ -61,6 +62,47 @@ class LocalProgressRepository implements ProgressRepository {
             logicSkill: Value(logicSkill),
             patternSkill: Value(patternSkill),
             updatedAt: Value(DateTime.now()),
+          ),
+        );
+  }
+
+  @override
+  Future<StoredDailyChallengeCompletion?> getDailyChallengeCompletion({
+    required String userId,
+    required String challengeDate,
+  }) async {
+    final row = await (_database.select(_database.dailyChallengeCompletions)
+          ..where(
+            (completion) =>
+                completion.userId.equals(userId) &
+                completion.challengeDate.equals(challengeDate),
+          ))
+        .getSingleOrNull();
+
+    if (row == null) return null;
+
+    return StoredDailyChallengeCompletion(
+      challengeDate: row.challengeDate,
+      correctCount: row.correctCount,
+      totalCount: row.totalCount,
+      xpEarned: row.xpEarned,
+      completedAt: row.completedAt,
+    );
+  }
+
+  @override
+  Future<void> recordDailyChallengeCompletion({
+    required String userId,
+    required StoredDailyChallengeCompletion completion,
+  }) async {
+    await _database.into(_database.dailyChallengeCompletions).insertOnConflictUpdate(
+          DailyChallengeCompletionsCompanion(
+            userId: Value(userId),
+            challengeDate: Value(completion.challengeDate),
+            correctCount: Value(completion.correctCount),
+            totalCount: Value(completion.totalCount),
+            xpEarned: Value(completion.xpEarned),
+            completedAt: Value(completion.completedAt),
           ),
         );
   }

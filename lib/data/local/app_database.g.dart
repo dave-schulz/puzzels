@@ -1717,6 +1717,452 @@ class LessonResultsCompanion extends UpdateCompanion<LessonResult> {
   }
 }
 
+class $DailyChallengeCompletionsTable extends DailyChallengeCompletions
+    with TableInfo<$DailyChallengeCompletionsTable, DailyChallengeCompletion> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $DailyChallengeCompletionsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES users (id)',
+    ),
+  );
+  static const VerificationMeta _challengeDateMeta = const VerificationMeta(
+    'challengeDate',
+  );
+  @override
+  late final GeneratedColumn<String> challengeDate = GeneratedColumn<String>(
+    'challenge_date',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _correctCountMeta = const VerificationMeta(
+    'correctCount',
+  );
+  @override
+  late final GeneratedColumn<int> correctCount = GeneratedColumn<int>(
+    'correct_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _totalCountMeta = const VerificationMeta(
+    'totalCount',
+  );
+  @override
+  late final GeneratedColumn<int> totalCount = GeneratedColumn<int>(
+    'total_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _xpEarnedMeta = const VerificationMeta(
+    'xpEarned',
+  );
+  @override
+  late final GeneratedColumn<int> xpEarned = GeneratedColumn<int>(
+    'xp_earned',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _completedAtMeta = const VerificationMeta(
+    'completedAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> completedAt = GeneratedColumn<DateTime>(
+    'completed_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    userId,
+    challengeDate,
+    correctCount,
+    totalCount,
+    xpEarned,
+    completedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'daily_challenge_completions';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<DailyChallengeCompletion> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('challenge_date')) {
+      context.handle(
+        _challengeDateMeta,
+        challengeDate.isAcceptableOrUnknown(
+          data['challenge_date']!,
+          _challengeDateMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_challengeDateMeta);
+    }
+    if (data.containsKey('correct_count')) {
+      context.handle(
+        _correctCountMeta,
+        correctCount.isAcceptableOrUnknown(
+          data['correct_count']!,
+          _correctCountMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_correctCountMeta);
+    }
+    if (data.containsKey('total_count')) {
+      context.handle(
+        _totalCountMeta,
+        totalCount.isAcceptableOrUnknown(data['total_count']!, _totalCountMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_totalCountMeta);
+    }
+    if (data.containsKey('xp_earned')) {
+      context.handle(
+        _xpEarnedMeta,
+        xpEarned.isAcceptableOrUnknown(data['xp_earned']!, _xpEarnedMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_xpEarnedMeta);
+    }
+    if (data.containsKey('completed_at')) {
+      context.handle(
+        _completedAtMeta,
+        completedAt.isAcceptableOrUnknown(
+          data['completed_at']!,
+          _completedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_completedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {userId, challengeDate};
+  @override
+  DailyChallengeCompletion map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return DailyChallengeCompletion(
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      challengeDate: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}challenge_date'],
+      )!,
+      correctCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}correct_count'],
+      )!,
+      totalCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}total_count'],
+      )!,
+      xpEarned: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}xp_earned'],
+      )!,
+      completedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}completed_at'],
+      )!,
+    );
+  }
+
+  @override
+  $DailyChallengeCompletionsTable createAlias(String alias) {
+    return $DailyChallengeCompletionsTable(attachedDatabase, alias);
+  }
+}
+
+class DailyChallengeCompletion extends DataClass
+    implements Insertable<DailyChallengeCompletion> {
+  final String userId;
+  final String challengeDate;
+  final int correctCount;
+  final int totalCount;
+  final int xpEarned;
+  final DateTime completedAt;
+  const DailyChallengeCompletion({
+    required this.userId,
+    required this.challengeDate,
+    required this.correctCount,
+    required this.totalCount,
+    required this.xpEarned,
+    required this.completedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['user_id'] = Variable<String>(userId);
+    map['challenge_date'] = Variable<String>(challengeDate);
+    map['correct_count'] = Variable<int>(correctCount);
+    map['total_count'] = Variable<int>(totalCount);
+    map['xp_earned'] = Variable<int>(xpEarned);
+    map['completed_at'] = Variable<DateTime>(completedAt);
+    return map;
+  }
+
+  DailyChallengeCompletionsCompanion toCompanion(bool nullToAbsent) {
+    return DailyChallengeCompletionsCompanion(
+      userId: Value(userId),
+      challengeDate: Value(challengeDate),
+      correctCount: Value(correctCount),
+      totalCount: Value(totalCount),
+      xpEarned: Value(xpEarned),
+      completedAt: Value(completedAt),
+    );
+  }
+
+  factory DailyChallengeCompletion.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return DailyChallengeCompletion(
+      userId: serializer.fromJson<String>(json['userId']),
+      challengeDate: serializer.fromJson<String>(json['challengeDate']),
+      correctCount: serializer.fromJson<int>(json['correctCount']),
+      totalCount: serializer.fromJson<int>(json['totalCount']),
+      xpEarned: serializer.fromJson<int>(json['xpEarned']),
+      completedAt: serializer.fromJson<DateTime>(json['completedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'userId': serializer.toJson<String>(userId),
+      'challengeDate': serializer.toJson<String>(challengeDate),
+      'correctCount': serializer.toJson<int>(correctCount),
+      'totalCount': serializer.toJson<int>(totalCount),
+      'xpEarned': serializer.toJson<int>(xpEarned),
+      'completedAt': serializer.toJson<DateTime>(completedAt),
+    };
+  }
+
+  DailyChallengeCompletion copyWith({
+    String? userId,
+    String? challengeDate,
+    int? correctCount,
+    int? totalCount,
+    int? xpEarned,
+    DateTime? completedAt,
+  }) => DailyChallengeCompletion(
+    userId: userId ?? this.userId,
+    challengeDate: challengeDate ?? this.challengeDate,
+    correctCount: correctCount ?? this.correctCount,
+    totalCount: totalCount ?? this.totalCount,
+    xpEarned: xpEarned ?? this.xpEarned,
+    completedAt: completedAt ?? this.completedAt,
+  );
+  DailyChallengeCompletion copyWithCompanion(
+    DailyChallengeCompletionsCompanion data,
+  ) {
+    return DailyChallengeCompletion(
+      userId: data.userId.present ? data.userId.value : this.userId,
+      challengeDate: data.challengeDate.present
+          ? data.challengeDate.value
+          : this.challengeDate,
+      correctCount: data.correctCount.present
+          ? data.correctCount.value
+          : this.correctCount,
+      totalCount: data.totalCount.present
+          ? data.totalCount.value
+          : this.totalCount,
+      xpEarned: data.xpEarned.present ? data.xpEarned.value : this.xpEarned,
+      completedAt: data.completedAt.present
+          ? data.completedAt.value
+          : this.completedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DailyChallengeCompletion(')
+          ..write('userId: $userId, ')
+          ..write('challengeDate: $challengeDate, ')
+          ..write('correctCount: $correctCount, ')
+          ..write('totalCount: $totalCount, ')
+          ..write('xpEarned: $xpEarned, ')
+          ..write('completedAt: $completedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    userId,
+    challengeDate,
+    correctCount,
+    totalCount,
+    xpEarned,
+    completedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is DailyChallengeCompletion &&
+          other.userId == this.userId &&
+          other.challengeDate == this.challengeDate &&
+          other.correctCount == this.correctCount &&
+          other.totalCount == this.totalCount &&
+          other.xpEarned == this.xpEarned &&
+          other.completedAt == this.completedAt);
+}
+
+class DailyChallengeCompletionsCompanion
+    extends UpdateCompanion<DailyChallengeCompletion> {
+  final Value<String> userId;
+  final Value<String> challengeDate;
+  final Value<int> correctCount;
+  final Value<int> totalCount;
+  final Value<int> xpEarned;
+  final Value<DateTime> completedAt;
+  final Value<int> rowid;
+  const DailyChallengeCompletionsCompanion({
+    this.userId = const Value.absent(),
+    this.challengeDate = const Value.absent(),
+    this.correctCount = const Value.absent(),
+    this.totalCount = const Value.absent(),
+    this.xpEarned = const Value.absent(),
+    this.completedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  DailyChallengeCompletionsCompanion.insert({
+    required String userId,
+    required String challengeDate,
+    required int correctCount,
+    required int totalCount,
+    required int xpEarned,
+    required DateTime completedAt,
+    this.rowid = const Value.absent(),
+  }) : userId = Value(userId),
+       challengeDate = Value(challengeDate),
+       correctCount = Value(correctCount),
+       totalCount = Value(totalCount),
+       xpEarned = Value(xpEarned),
+       completedAt = Value(completedAt);
+  static Insertable<DailyChallengeCompletion> custom({
+    Expression<String>? userId,
+    Expression<String>? challengeDate,
+    Expression<int>? correctCount,
+    Expression<int>? totalCount,
+    Expression<int>? xpEarned,
+    Expression<DateTime>? completedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (userId != null) 'user_id': userId,
+      if (challengeDate != null) 'challenge_date': challengeDate,
+      if (correctCount != null) 'correct_count': correctCount,
+      if (totalCount != null) 'total_count': totalCount,
+      if (xpEarned != null) 'xp_earned': xpEarned,
+      if (completedAt != null) 'completed_at': completedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  DailyChallengeCompletionsCompanion copyWith({
+    Value<String>? userId,
+    Value<String>? challengeDate,
+    Value<int>? correctCount,
+    Value<int>? totalCount,
+    Value<int>? xpEarned,
+    Value<DateTime>? completedAt,
+    Value<int>? rowid,
+  }) {
+    return DailyChallengeCompletionsCompanion(
+      userId: userId ?? this.userId,
+      challengeDate: challengeDate ?? this.challengeDate,
+      correctCount: correctCount ?? this.correctCount,
+      totalCount: totalCount ?? this.totalCount,
+      xpEarned: xpEarned ?? this.xpEarned,
+      completedAt: completedAt ?? this.completedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (challengeDate.present) {
+      map['challenge_date'] = Variable<String>(challengeDate.value);
+    }
+    if (correctCount.present) {
+      map['correct_count'] = Variable<int>(correctCount.value);
+    }
+    if (totalCount.present) {
+      map['total_count'] = Variable<int>(totalCount.value);
+    }
+    if (xpEarned.present) {
+      map['xp_earned'] = Variable<int>(xpEarned.value);
+    }
+    if (completedAt.present) {
+      map['completed_at'] = Variable<DateTime>(completedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('DailyChallengeCompletionsCompanion(')
+          ..write('userId: $userId, ')
+          ..write('challengeDate: $challengeDate, ')
+          ..write('correctCount: $correctCount, ')
+          ..write('totalCount: $totalCount, ')
+          ..write('xpEarned: $xpEarned, ')
+          ..write('completedAt: $completedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -1724,6 +2170,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $UserProgressTable userProgress = $UserProgressTable(this);
   late final $AttemptsTable attempts = $AttemptsTable(this);
   late final $LessonResultsTable lessonResults = $LessonResultsTable(this);
+  late final $DailyChallengeCompletionsTable dailyChallengeCompletions =
+      $DailyChallengeCompletionsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -1733,6 +2181,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     userProgress,
     attempts,
     lessonResults,
+    dailyChallengeCompletions,
   ];
 }
 
@@ -1803,6 +2252,31 @@ final class $$UsersTableReferences
     ).filter((f) => f.userId.id.sqlEquals($_itemColumn<String>('id')!));
 
     final cache = $_typedResult.readTableOrNull(_lessonResultsRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
+  static MultiTypedResultKey<
+    $DailyChallengeCompletionsTable,
+    List<DailyChallengeCompletion>
+  >
+  _dailyChallengeCompletionsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.dailyChallengeCompletions,
+        aliasName: 'users__id__daily_challenge_completions__user_id',
+      );
+
+  $$DailyChallengeCompletionsTableProcessedTableManager
+  get dailyChallengeCompletionsRefs {
+    final manager = $$DailyChallengeCompletionsTableTableManager(
+      $_db,
+      $_db.dailyChallengeCompletions,
+    ).filter((f) => f.userId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _dailyChallengeCompletionsRefsTable($_db),
+    );
     return ProcessedTableManager(
       manager.$state.copyWith(prefetchedData: cache),
     );
@@ -1904,6 +2378,33 @@ class $$UsersTableFilterComposer extends Composer<_$AppDatabase, $UsersTable> {
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> dailyChallengeCompletionsRefs(
+    Expression<bool> Function($$DailyChallengeCompletionsTableFilterComposer f)
+    f,
+  ) {
+    final $$DailyChallengeCompletionsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.dailyChallengeCompletions,
+          getReferencedColumn: (t) => t.userId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DailyChallengeCompletionsTableFilterComposer(
+                $db: $db,
+                $table: $db.dailyChallengeCompletions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -2027,6 +2528,33 @@ class $$UsersTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> dailyChallengeCompletionsRefs<T extends Object>(
+    Expression<T> Function($$DailyChallengeCompletionsTableAnnotationComposer a)
+    f,
+  ) {
+    final $$DailyChallengeCompletionsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.dailyChallengeCompletions,
+          getReferencedColumn: (t) => t.userId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$DailyChallengeCompletionsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.dailyChallengeCompletions,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$UsersTableTableManager
@@ -2046,6 +2574,7 @@ class $$UsersTableTableManager
             bool userProgressRefs,
             bool attemptsRefs,
             bool lessonResultsRefs,
+            bool dailyChallengeCompletionsRefs,
           })
         > {
   $$UsersTableTableManager(_$AppDatabase db, $UsersTable table)
@@ -2094,6 +2623,7 @@ class $$UsersTableTableManager
                 userProgressRefs = false,
                 attemptsRefs = false,
                 lessonResultsRefs = false,
+                dailyChallengeCompletionsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -2101,6 +2631,8 @@ class $$UsersTableTableManager
                     if (userProgressRefs) db.userProgress,
                     if (attemptsRefs) db.attempts,
                     if (lessonResultsRefs) db.lessonResults,
+                    if (dailyChallengeCompletionsRefs)
+                      db.dailyChallengeCompletions,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -2164,6 +2696,27 @@ class $$UsersTableTableManager
                               ),
                           typedResults: items,
                         ),
+                      if (dailyChallengeCompletionsRefs)
+                        await $_getPrefetchedData<
+                          User,
+                          $UsersTable,
+                          DailyChallengeCompletion
+                        >(
+                          currentTable: table,
+                          referencedTable: $$UsersTableReferences
+                              ._dailyChallengeCompletionsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$UsersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).dailyChallengeCompletionsRefs,
+                          referencedItemsForCurrentItem:
+                              (item, referencedItems) => referencedItems.where(
+                                (e) => e.userId == item.id,
+                              ),
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -2188,6 +2741,7 @@ typedef $$UsersTableProcessedTableManager =
         bool userProgressRefs,
         bool attemptsRefs,
         bool lessonResultsRefs,
+        bool dailyChallengeCompletionsRefs,
       })
     >;
 typedef $$UserProgressTableCreateCompanionBuilder =
@@ -3280,6 +3834,373 @@ typedef $$LessonResultsTableProcessedTableManager =
       LessonResult,
       PrefetchHooks Function({bool userId})
     >;
+typedef $$DailyChallengeCompletionsTableCreateCompanionBuilder =
+    DailyChallengeCompletionsCompanion Function({
+      required String userId,
+      required String challengeDate,
+      required int correctCount,
+      required int totalCount,
+      required int xpEarned,
+      required DateTime completedAt,
+      Value<int> rowid,
+    });
+typedef $$DailyChallengeCompletionsTableUpdateCompanionBuilder =
+    DailyChallengeCompletionsCompanion Function({
+      Value<String> userId,
+      Value<String> challengeDate,
+      Value<int> correctCount,
+      Value<int> totalCount,
+      Value<int> xpEarned,
+      Value<DateTime> completedAt,
+      Value<int> rowid,
+    });
+
+final class $$DailyChallengeCompletionsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $DailyChallengeCompletionsTable,
+          DailyChallengeCompletion
+        > {
+  $$DailyChallengeCompletionsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $UsersTable _userIdTable(_$AppDatabase db) =>
+      db.users.createAlias('daily_challenge_completions__user_id__users__id');
+
+  $$UsersTableProcessedTableManager get userId {
+    final $_column = $_itemColumn<String>('user_id')!;
+
+    final manager = $$UsersTableTableManager(
+      $_db,
+      $_db.users,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_userIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$DailyChallengeCompletionsTableFilterComposer
+    extends Composer<_$AppDatabase, $DailyChallengeCompletionsTable> {
+  $$DailyChallengeCompletionsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get challengeDate => $composableBuilder(
+    column: $table.challengeDate,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get correctCount => $composableBuilder(
+    column: $table.correctCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get totalCount => $composableBuilder(
+    column: $table.totalCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get xpEarned => $composableBuilder(
+    column: $table.xpEarned,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$UsersTableFilterComposer get userId {
+    final $$UsersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.users,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsersTableFilterComposer(
+            $db: $db,
+            $table: $db.users,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DailyChallengeCompletionsTableOrderingComposer
+    extends Composer<_$AppDatabase, $DailyChallengeCompletionsTable> {
+  $$DailyChallengeCompletionsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get challengeDate => $composableBuilder(
+    column: $table.challengeDate,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get correctCount => $composableBuilder(
+    column: $table.correctCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get totalCount => $composableBuilder(
+    column: $table.totalCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get xpEarned => $composableBuilder(
+    column: $table.xpEarned,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$UsersTableOrderingComposer get userId {
+    final $$UsersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.users,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsersTableOrderingComposer(
+            $db: $db,
+            $table: $db.users,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DailyChallengeCompletionsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $DailyChallengeCompletionsTable> {
+  $$DailyChallengeCompletionsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get challengeDate => $composableBuilder(
+    column: $table.challengeDate,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get correctCount => $composableBuilder(
+    column: $table.correctCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get totalCount => $composableBuilder(
+    column: $table.totalCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get xpEarned =>
+      $composableBuilder(column: $table.xpEarned, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get completedAt => $composableBuilder(
+    column: $table.completedAt,
+    builder: (column) => column,
+  );
+
+  $$UsersTableAnnotationComposer get userId {
+    final $$UsersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.userId,
+      referencedTable: $db.users,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$UsersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.users,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$DailyChallengeCompletionsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $DailyChallengeCompletionsTable,
+          DailyChallengeCompletion,
+          $$DailyChallengeCompletionsTableFilterComposer,
+          $$DailyChallengeCompletionsTableOrderingComposer,
+          $$DailyChallengeCompletionsTableAnnotationComposer,
+          $$DailyChallengeCompletionsTableCreateCompanionBuilder,
+          $$DailyChallengeCompletionsTableUpdateCompanionBuilder,
+          (
+            DailyChallengeCompletion,
+            $$DailyChallengeCompletionsTableReferences,
+          ),
+          DailyChallengeCompletion,
+          PrefetchHooks Function({bool userId})
+        > {
+  $$DailyChallengeCompletionsTableTableManager(
+    _$AppDatabase db,
+    $DailyChallengeCompletionsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$DailyChallengeCompletionsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$DailyChallengeCompletionsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$DailyChallengeCompletionsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> userId = const Value.absent(),
+                Value<String> challengeDate = const Value.absent(),
+                Value<int> correctCount = const Value.absent(),
+                Value<int> totalCount = const Value.absent(),
+                Value<int> xpEarned = const Value.absent(),
+                Value<DateTime> completedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => DailyChallengeCompletionsCompanion(
+                userId: userId,
+                challengeDate: challengeDate,
+                correctCount: correctCount,
+                totalCount: totalCount,
+                xpEarned: xpEarned,
+                completedAt: completedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String userId,
+                required String challengeDate,
+                required int correctCount,
+                required int totalCount,
+                required int xpEarned,
+                required DateTime completedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => DailyChallengeCompletionsCompanion.insert(
+                userId: userId,
+                challengeDate: challengeDate,
+                correctCount: correctCount,
+                totalCount: totalCount,
+                xpEarned: xpEarned,
+                completedAt: completedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$DailyChallengeCompletionsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({userId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (userId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.userId,
+                        referencedTable:
+                            $$DailyChallengeCompletionsTableReferences
+                                ._userIdTable(db),
+                        referencedColumn:
+                            $$DailyChallengeCompletionsTableReferences
+                                ._userIdTable(db)
+                                .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$DailyChallengeCompletionsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $DailyChallengeCompletionsTable,
+      DailyChallengeCompletion,
+      $$DailyChallengeCompletionsTableFilterComposer,
+      $$DailyChallengeCompletionsTableOrderingComposer,
+      $$DailyChallengeCompletionsTableAnnotationComposer,
+      $$DailyChallengeCompletionsTableCreateCompanionBuilder,
+      $$DailyChallengeCompletionsTableUpdateCompanionBuilder,
+      (DailyChallengeCompletion, $$DailyChallengeCompletionsTableReferences),
+      DailyChallengeCompletion,
+      PrefetchHooks Function({bool userId})
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3292,4 +4213,9 @@ class $AppDatabaseManager {
       $$AttemptsTableTableManager(_db, _db.attempts);
   $$LessonResultsTableTableManager get lessonResults =>
       $$LessonResultsTableTableManager(_db, _db.lessonResults);
+  $$DailyChallengeCompletionsTableTableManager get dailyChallengeCompletions =>
+      $$DailyChallengeCompletionsTableTableManager(
+        _db,
+        _db.dailyChallengeCompletions,
+      );
 }

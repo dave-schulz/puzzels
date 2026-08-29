@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../lesson/lesson_screen.dart';
+import '../../providers/daily_challenge_provider.dart';
 import '../../providers/home_provider.dart';
 import '../../providers/lesson_provider.dart';
 import '../../providers/puzzle_provider.dart';
@@ -54,10 +55,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
     );
   }
 
+  void _startDailyChallenge() {
+    final completed = ref.read(dailyChallengeCompletedProvider);
+    if (completed) return;
+
+    final lesson = ref.read(todayDailyLessonProvider);
+    ref.read(lessonSessionProvider.notifier).start(lesson);
+    Navigator.of(context).push<void>(
+      MaterialPageRoute<void>(
+        builder: (context) => const LessonScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final homeState = ref.watch(homeStateProvider);
+    final dailyCompleted = ref.watch(dailyChallengeCompletedProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -103,7 +118,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                 ),
                 const SizedBox(height: 12),
                 DailyChallengeCard(
-                  onTap: _startLesson,
+                  completedToday: dailyCompleted,
+                  onTap: dailyCompleted ? null : _startDailyChallenge,
                 ),
                 const SizedBox(height: 24),
               ],

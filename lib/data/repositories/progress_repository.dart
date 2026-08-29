@@ -1,3 +1,4 @@
+import '../models/stored_daily_challenge.dart';
 import '../models/stored_progress.dart';
 import '../models/stored_user.dart';
 
@@ -16,6 +17,16 @@ abstract class ProgressRepository {
     required int sequenceSkill,
     required int logicSkill,
     required int patternSkill,
+  });
+
+  Future<StoredDailyChallengeCompletion?> getDailyChallengeCompletion({
+    required String userId,
+    required String challengeDate,
+  });
+
+  Future<void> recordDailyChallengeCompletion({
+    required String userId,
+    required StoredDailyChallengeCompletion completion,
   });
 
   Future<void> recordAttempt({

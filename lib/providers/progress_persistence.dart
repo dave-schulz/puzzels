@@ -1,7 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/skill/models/user_skills.dart';
+import '../features/daily_challenge/daily_challenge_date.dart';
 import 'database_provider.dart';
+import 'daily_challenge_provider.dart';
 import 'skills_provider.dart';
 import 'streak_provider.dart';
 import 'user_provider.dart';
@@ -31,6 +33,15 @@ Future<void> hydratePersistedProgress(ProviderContainer container) async {
           pattern: progress.patternSkill,
         ),
       );
+
+  final dateKey = dailyChallengeDateKey(DateTime.now());
+  final dailyCompletion = await repository.getDailyChallengeCompletion(
+    userId: userId,
+    challengeDate: dateKey,
+  );
+  container
+      .read(dailyChallengeCompletedProvider.notifier)
+      .restore(dailyCompletion != null);
 }
 
 Future<void> persistUserProgress(

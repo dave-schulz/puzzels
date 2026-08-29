@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 
+import '../../daily_challenge/daily_challenge_constants.dart';
+
 class DailyChallengeCard extends StatelessWidget {
   const DailyChallengeCard({
     super.key,
+    required this.completedToday,
     required this.onTap,
   });
 
-  final VoidCallback onTap;
-
-  static const puzzleCount = 5;
-  static const bonusXp = 100;
+  final bool completedToday;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Material(
-      color: theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
+      color: completedToday
+          ? theme.colorScheme.surfaceContainerHighest
+          : theme.colorScheme.primaryContainer.withValues(alpha: 0.35),
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -25,7 +28,9 @@ class DailyChallengeCard extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: theme.colorScheme.primary.withValues(alpha: 0.2),
+              color: completedToday
+                  ? theme.colorScheme.outlineVariant
+                  : theme.colorScheme.primary.withValues(alpha: 0.2),
             ),
           ),
           child: Padding(
@@ -37,31 +42,36 @@ class DailyChallengeCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '⭐ $puzzleCount puzzles',
+                        '⭐ ${DailyChallengeConstants.puzzleCount} puzzles',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Complete today\'s set',
+                        completedToday
+                            ? 'Completed today'
+                            : 'Complete today\'s set',
                         style: theme.textTheme.bodyLarge?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      Text(
-                        '+$bonusXp XP bonus',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.primary,
-                          fontWeight: FontWeight.w600,
+                      if (!completedToday)
+                        Text(
+                          '+${DailyChallengeConstants.bonusXp} XP bonus',
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
-                      ),
                     ],
                   ),
                 ),
                 Icon(
-                  Icons.chevron_right,
-                  color: theme.colorScheme.primary,
+                  completedToday ? Icons.check_circle : Icons.chevron_right,
+                  color: completedToday
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.primary,
                 ),
               ],
             ),

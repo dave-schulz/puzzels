@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:brainy/data/local/local_user.dart';
+import 'package:brainy/data/models/stored_daily_challenge.dart';
 import 'package:brainy/data/models/stored_progress.dart';
 import 'package:brainy/data/repositories/local_progress_repository.dart';
 import 'package:brainy/providers/database_provider.dart';
@@ -113,6 +114,33 @@ void main() {
       expect(results, hasLength(1));
       expect(results.first.correctCount, 4);
       expect(results.first.xpEarned, 80);
+    });
+
+    test('records daily challenge completion once per date', () async {
+      final database = await createTestAppDatabase();
+      addTearDown(database.close);
+      final repository = LocalProgressRepository(database);
+      const dateKey = '2026-08-30';
+
+      await repository.recordDailyChallengeCompletion(
+        userId: localUserId,
+        completion: StoredDailyChallengeCompletion(
+          challengeDate: dateKey,
+          correctCount: 5,
+          totalCount: 5,
+          xpEarned: 200,
+          completedAt: DateTime(2026, 8, 30, 18),
+        ),
+      );
+
+      final completion = await repository.getDailyChallengeCompletion(
+        userId: localUserId,
+        challengeDate: dateKey,
+      );
+
+      expect(completion, isNotNull);
+      expect(completion!.xpEarned, 200);
+      expect(completion.correctCount, 5);
     });
   });
 }

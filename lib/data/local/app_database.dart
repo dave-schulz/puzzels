@@ -6,7 +6,15 @@ import 'tables/brainy_tables.dart';
 
 part 'app_database.g.dart';
 
-@DriftDatabase(tables: [Users, UserProgress, Attempts, LessonResults])
+@DriftDatabase(
+  tables: [
+    Users,
+    UserProgress,
+    Attempts,
+    LessonResults,
+    DailyChallengeCompletions,
+  ],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase([QueryExecutor? executor]) : super(executor ?? openConnection());
 
@@ -14,7 +22,7 @@ class AppDatabase extends _$AppDatabase {
       : super(executor ?? openTestConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -23,6 +31,9 @@ class AppDatabase extends _$AppDatabase {
             await migrator.addColumn(userProgress, userProgress.sequenceSkill);
             await migrator.addColumn(userProgress, userProgress.logicSkill);
             await migrator.addColumn(userProgress, userProgress.patternSkill);
+          }
+          if (from < 3) {
+            await migrator.createTable(dailyChallengeCompletions);
           }
         },
       );

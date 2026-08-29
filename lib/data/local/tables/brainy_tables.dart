@@ -63,3 +63,20 @@ class LessonResults extends Table {
 
   DateTimeColumn get completedAt => dateTime()();
 }
+
+class DailyChallengeCompletions extends Table {
+  TextColumn get userId => text().references(Users, #id)();
+
+  TextColumn get challengeDate => text()();
+
+  IntColumn get correctCount => integer()();
+
+  IntColumn get totalCount => integer()();
+
+  IntColumn get xpEarned => integer()();
+
+  DateTimeColumn get completedAt => dateTime()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {userId, challengeDate};
+}

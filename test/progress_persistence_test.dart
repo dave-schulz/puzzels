@@ -2,8 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:brainy/data/local/local_user.dart';
+import 'package:brainy/data/models/stored_daily_challenge.dart';
 import 'package:brainy/data/repositories/local_progress_repository.dart';
+import 'package:brainy/features/daily_challenge/daily_challenge_date.dart';
 import 'package:brainy/providers/database_provider.dart';
+import 'package:brainy/providers/daily_challenge_provider.dart';
 import 'package:brainy/providers/lesson_provider.dart';
 import 'package:brainy/providers/progress_persistence.dart';
 import 'package:brainy/providers/puzzle_provider.dart';
@@ -91,6 +94,35 @@ void main() {
       final attempts = await database.select(database.attempts).get();
       expect(attempts, hasLength(1));
       expect(attempts.first.isCorrect, isTrue);
+    });
+
+    test('hydrates daily challenge completion for today', () async {
+      final database = await createTestAppDatabase();
+      final repository = LocalProgressRepository(database);
+      addTearDown(database.close);
+
+      final dateKey = dailyChallengeDateKey(DateTime.now());
+      await repository.recordDailyChallengeCompletion(
+        userId: localUserId,
+        completion: StoredDailyChallengeCompletion(
+          challengeDate: dateKey,
+          correctCount: 4,
+          totalCount: 5,
+          xpEarned: 180,
+          completedAt: DateTime.now(),
+        ),
+      );
+
+      final container = ProviderContainer(
+        overrides: [
+          progressRepositoryProvider.overrideWithValue(repository),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await hydratePersistedProgress(container);
+
+      expect(container.read(dailyChallengeCompletedProvider), isTrue);
     });
   });
 }
