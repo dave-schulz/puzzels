@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../puzzle/generators/sequence_generator.dart';
 import '../puzzle/puzzle_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -35,9 +36,11 @@ class HomeScreen extends StatelessWidget {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: () {
+                    final puzzles =
+                        SequenceGenerator().generateSession(count: 5);
                     Navigator.of(context).push<void>(
                       MaterialPageRoute<void>(
-                        builder: (context) => const PuzzleScreen(),
+                        builder: (context) => PuzzleScreen(puzzles: puzzles),
                       ),
                     );
                   },

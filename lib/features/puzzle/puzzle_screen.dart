@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import 'data/sample_puzzles.dart';
 import 'models/puzzle.dart';
 import 'widgets/answer_button.dart';
 import 'widgets/answer_list.dart';
@@ -15,7 +14,7 @@ enum _PuzzleResult { none, correct, incorrect }
 class PuzzleScreen extends StatefulWidget {
   const PuzzleScreen({
     super.key,
-    this.puzzles = samplePuzzles,
+    required this.puzzles,
   });
 
   final List<Puzzle> puzzles;
