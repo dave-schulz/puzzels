@@ -1,52 +1,11 @@
-class StoredUserProgress {
-  const StoredUserProgress({
-    required this.userId,
-    required this.totalXp,
-    required this.streak,
-    required this.lastPlayDate,
-    required this.updatedAt,
-  });
+import '../models/stored_progress.dart';
+import '../models/stored_user.dart';
 
-  final String userId;
-  final int totalXp;
-  final int streak;
-  final DateTime? lastPlayDate;
-  final DateTime updatedAt;
-}
-
-class StoredAttempt {
-  const StoredAttempt({
-    required this.puzzleId,
-    required this.puzzleType,
-    required this.difficulty,
-    required this.isCorrect,
-    required this.xpEarned,
-    required this.attemptedAt,
-  });
-
-  final String puzzleId;
-  final String puzzleType;
-  final String difficulty;
-  final bool isCorrect;
-  final int xpEarned;
-  final DateTime attemptedAt;
-}
-
-class StoredLessonResult {
-  const StoredLessonResult({
-    required this.correctCount,
-    required this.totalCount,
-    required this.xpEarned,
-    required this.completedAt,
-  });
-
-  final int correctCount;
-  final int totalCount;
-  final int xpEarned;
-  final DateTime completedAt;
-}
-
+/// Local and remote progress storage share this interface.
+/// Override [progressRepositoryProvider] in main to swap implementations.
 abstract class ProgressRepository {
+  Future<StoredUser?> getUser(String userId);
+
   Future<StoredUserProgress?> getProgress(String userId);
 
   Future<void> saveProgress({

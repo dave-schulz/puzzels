@@ -8,14 +8,17 @@ final appDatabaseProvider = Provider<AppDatabase>((ref) {
   throw UnimplementedError('AppDatabase must be provided via ProviderScope');
 });
 
+/// Override in main (or tests) to wire local or remote storage.
 final progressRepositoryProvider = Provider<ProgressRepository>((ref) {
-  return LocalProgressRepository(ref.watch(appDatabaseProvider));
+  throw UnimplementedError(
+    'ProgressRepository must be provided via ProviderScope overrides',
+  );
 });
 
-Future<AppDatabase> createAppDatabase() async {
+Future<LocalProgressRepository> createLocalProgressRepository() async {
   final database = AppDatabase();
   await database.ensureDefaultUser();
-  return database;
+  return LocalProgressRepository(database);
 }
 
 Future<AppDatabase> createTestAppDatabase() async {

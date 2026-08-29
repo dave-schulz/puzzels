@@ -8,10 +8,10 @@ import 'providers/progress_persistence.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final database = await createAppDatabase();
+  final repository = await createLocalProgressRepository();
   final container = ProviderContainer(
     overrides: [
-      appDatabaseProvider.overrideWithValue(database),
+      progressRepositoryProvider.overrideWithValue(repository),
     ],
   );
   await hydratePersistedProgress(container);

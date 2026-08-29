@@ -8,17 +8,18 @@ import 'package:brainy/providers/lesson_provider.dart';
 import 'package:brainy/providers/progress_persistence.dart';
 import 'package:brainy/providers/puzzle_provider.dart';
 import 'package:brainy/providers/streak_provider.dart';
+import 'package:brainy/providers/user_provider.dart';
 import 'package:brainy/providers/xp_provider.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('Progress persistence', () {
-    test('hydrates XP and streak from local database', () async {
+    test('hydrates user profile, XP and streak from local database', () async {
       final database = await createTestAppDatabase();
+      final repository = LocalProgressRepository(database);
       addTearDown(database.close);
 
-      final repository = LocalProgressRepository(database);
       await repository.saveProgress(
         userId: localUserId,
         totalXp: 120,
@@ -28,24 +29,26 @@ void main() {
 
       final container = ProviderContainer(
         overrides: [
-          appDatabaseProvider.overrideWithValue(database),
+          progressRepositoryProvider.overrideWithValue(repository),
         ],
       );
       addTearDown(container.dispose);
 
       await hydratePersistedProgress(container);
 
+      expect(container.read(userProfileProvider).displayName, defaultDisplayName);
       expect(container.read(xpProvider), 120);
       expect(container.read(streakProvider).streak, 2);
     });
 
     test('adding XP persists to local database', () async {
       final database = await createTestAppDatabase();
+      final repository = LocalProgressRepository(database);
       addTearDown(database.close);
 
       final container = ProviderContainer(
         overrides: [
-          appDatabaseProvider.overrideWithValue(database),
+          progressRepositoryProvider.overrideWithValue(repository),
         ],
       );
       addTearDown(container.dispose);
@@ -53,21 +56,19 @@ void main() {
       container.read(xpProvider.notifier).add(50);
       await Future<void>.delayed(Duration.zero);
 
-      final progress =
-          await container.read(progressRepositoryProvider).getProgress(
-                localUserId,
-              );
+      final progress = await repository.getProgress(localUserId);
 
       expect(progress!.totalXp, 50);
     });
 
     test('lesson attempts are stored locally', () async {
       final database = await createTestAppDatabase();
+      final repository = LocalProgressRepository(database);
       addTearDown(database.close);
 
       final container = ProviderContainer(
         overrides: [
-          appDatabaseProvider.overrideWithValue(database),
+          progressRepositoryProvider.overrideWithValue(repository),
         ],
       );
       addTearDown(container.dispose);

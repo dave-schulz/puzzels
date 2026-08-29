@@ -1,12 +1,25 @@
 import 'package:drift/drift.dart';
 
 import '../local/app_database.dart';
+import '../models/stored_progress.dart';
+import '../models/stored_user.dart';
 import 'progress_repository.dart';
 
 class LocalProgressRepository implements ProgressRepository {
   LocalProgressRepository(this._database);
 
   final AppDatabase _database;
+
+  @override
+  Future<StoredUser?> getUser(String userId) async {
+    final row = await (_database.select(_database.users)
+          ..where((user) => user.id.equals(userId)))
+        .getSingleOrNull();
+
+    if (row == null) return null;
+
+    return StoredUser(id: row.id, displayName: row.displayName);
+  }
 
   @override
   Future<StoredUserProgress?> getProgress(String userId) async {

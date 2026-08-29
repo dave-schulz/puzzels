@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:brainy/data/local/local_user.dart';
+import 'package:brainy/data/models/stored_progress.dart';
 import 'package:brainy/data/repositories/local_progress_repository.dart';
-import 'package:brainy/data/repositories/progress_repository.dart';
 import 'package:brainy/providers/database_provider.dart';
 
 void main() {
@@ -18,6 +18,16 @@ void main() {
           .getSingle();
 
       expect(user.displayName, defaultDisplayName);
+    });
+
+    test('reads default local user from repository', () async {
+      final database = await createTestAppDatabase();
+      addTearDown(database.close);
+      final repository = LocalProgressRepository(database);
+
+      final user = await repository.getUser(localUserId);
+
+      expect(user!.displayName, defaultDisplayName);
     });
 
     test('seeds default progress row for local user', () async {

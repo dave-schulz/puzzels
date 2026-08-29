@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/local/local_user.dart';
-import '../data/repositories/progress_repository.dart';
+import '../data/mappers/progress_mappers.dart';
 import '../features/lesson/models/lesson.dart';
 import '../features/lesson/models/lesson_result.dart';
 import '../features/lesson/models/lesson_session_state.dart';
@@ -11,6 +12,7 @@ import '../features/xp/xp_calculator.dart';
 import 'database_provider.dart';
 import 'puzzle_provider.dart';
 import 'streak_provider.dart';
+import 'user_provider.dart';
 import 'xp_provider.dart';
 
 export '../features/lesson/models/lesson_session_state.dart';
@@ -37,11 +39,11 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
       final reward = XpCalculator.rewardFor(puzzle.difficulty);
       final levelUp = ref.read(xpProvider.notifier).add(reward.amount);
 
-      _recordAttempt(
+      unawaited(_recordAttempt(
         puzzle: puzzle,
         isCorrect: true,
         xpEarned: reward.amount,
-      );
+      ));
 
       state = session.copyWith(
         selectedIndex: index,
@@ -53,11 +55,11 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
       return levelUp;
     }
 
-    _recordAttempt(
+    unawaited(_recordAttempt(
       puzzle: puzzle,
       isCorrect: false,
       xpEarned: 0,
-    );
+    ));
 
     state = session.copyWith(
       selectedIndex: index,
@@ -81,7 +83,7 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
           totalCount: session.lesson.puzzleCount,
           xpEarned: session.sessionXpEarned,
         );
-        _recordLessonResult(result);
+        unawaited(_recordLessonResult(result));
         state = null;
         return result;
       }
@@ -103,33 +105,25 @@ class LessonSessionNotifier extends Notifier<LessonSessionState?> {
     return null;
   }
 
-  void _recordAttempt({
+  Future<void> _recordAttempt({
     required Puzzle puzzle,
     required bool isCorrect,
     required int xpEarned,
-  }) {
-    ref.read(progressRepositoryProvider).recordAttempt(
-          userId: localUserId,
-          attempt: StoredAttempt(
-            puzzleId: puzzle.id,
-            puzzleType: puzzle.type.name,
-            difficulty: puzzle.difficulty.name,
+  }) async {
+    await ref.read(progressRepositoryProvider).recordAttempt(
+          userId: ref.read(currentUserIdProvider),
+          attempt: storedAttemptFrom(
+            puzzle: puzzle,
             isCorrect: isCorrect,
             xpEarned: xpEarned,
-            attemptedAt: DateTime.now(),
           ),
         );
   }
 
-  void _recordLessonResult(LessonResult result) {
-    ref.read(progressRepositoryProvider).recordLessonResult(
-          userId: localUserId,
-          result: StoredLessonResult(
-            correctCount: result.correctCount,
-            totalCount: result.totalCount,
-            xpEarned: result.xpEarned,
-            completedAt: DateTime.now(),
-          ),
+  Future<void> _recordLessonResult(LessonResult result) async {
+    await ref.read(progressRepositoryProvider).recordLessonResult(
+          userId: ref.read(currentUserIdProvider),
+          result: storedLessonResultFrom(result),
         );
   }
 }

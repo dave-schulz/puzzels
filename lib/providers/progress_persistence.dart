@@ -1,13 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../data/local/local_user.dart';
 import 'database_provider.dart';
 import 'streak_provider.dart';
+import 'user_provider.dart';
 import 'xp_provider.dart';
 
 Future<void> hydratePersistedProgress(ProviderContainer container) async {
-  final progress =
-      await container.read(progressRepositoryProvider).getProgress(localUserId);
+  final userId = container.read(currentUserIdProvider);
+  final repository = container.read(progressRepositoryProvider);
+
+  final user = await repository.getUser(userId);
+  if (user != null) {
+    container.read(userProfileProvider.notifier).restore(user.displayName);
+  }
+
+  final progress = await repository.getProgress(userId);
   if (progress == null) return;
 
   container.read(xpProvider.notifier).restore(progress.totalXp);
@@ -24,7 +31,7 @@ Future<void> persistUserProgress(
   DateTime? lastPlayDate,
 }) async {
   await ref.read(progressRepositoryProvider).saveProgress(
-        userId: localUserId,
+        userId: ref.read(currentUserIdProvider),
         totalXp: totalXp,
         streak: streak,
         lastPlayDate: lastPlayDate,

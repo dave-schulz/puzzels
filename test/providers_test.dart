@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:brainy/data/repositories/local_progress_repository.dart';
 import 'package:brainy/providers/database_provider.dart';
 import 'package:brainy/providers/home_provider.dart';
 import 'package:brainy/providers/lesson_provider.dart';
@@ -11,9 +12,10 @@ import 'package:brainy/providers/xp_provider.dart';
 
 Future<ProviderContainer> createTestContainer() async {
   final database = await createTestAppDatabase();
+  final repository = LocalProgressRepository(database);
   final container = ProviderContainer(
     overrides: [
-      appDatabaseProvider.overrideWithValue(database),
+      progressRepositoryProvider.overrideWithValue(repository),
     ],
   );
   addTearDown(() async {
