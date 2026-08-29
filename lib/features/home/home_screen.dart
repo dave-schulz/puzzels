@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../lesson/generators/lesson_generator.dart';
 import '../lesson/lesson_screen.dart';
 import '../level/widgets/level_progress_bar.dart';
+import '../streak/widgets/streak_badge.dart';
+import '../streak/widgets/streak_scope.dart';
 import '../xp/widgets/xp_badge.dart';
 import '../xp/widgets/xp_scope.dart';
 
@@ -13,6 +15,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final xpController = XpScope.of(context);
+    final streakController = StreakScope.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -40,7 +43,17 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
+              ListenableBuilder(
+                listenable: streakController,
+                builder: (context, _) {
+                  if (streakController.streak == 0) {
+                    return const SizedBox.shrink();
+                  }
+                  return StreakBadge(streak: streakController.streak);
+                },
+              ),
+              const SizedBox(height: 12),
               ListenableBuilder(
                 listenable: xpController,
                 builder: (context, _) {

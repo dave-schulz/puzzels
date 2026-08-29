@@ -9,6 +9,7 @@ import '../puzzle/widgets/answer_list.dart';
 import '../puzzle/widgets/puzzle_feedback.dart';
 import '../puzzle/widgets/puzzle_progress.dart';
 import '../puzzle/widgets/puzzle_renderer.dart';
+import '../streak/widgets/streak_scope.dart';
 import '../xp/widgets/xp_gain_animation.dart';
 import '../xp/widgets/xp_scope.dart';
 import '../xp/xp_calculator.dart';
@@ -100,6 +101,8 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   void _finishLesson() {
+    StreakScope.of(context).recordLessonCompleted();
+
     final result = LessonResult(
       correctCount: _correctCount,
       totalCount: widget.lesson.puzzleCount,

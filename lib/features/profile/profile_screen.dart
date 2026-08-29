@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../level/widgets/level_progress_bar.dart';
+import '../streak/widgets/streak_badge.dart';
+import '../streak/widgets/streak_scope.dart';
 import '../xp/widgets/xp_badge.dart';
 import '../xp/widgets/xp_scope.dart';
 
@@ -11,6 +13,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final xpController = XpScope.of(context);
+    final streakController = StreakScope.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -42,6 +45,10 @@ class ProfileScreen extends StatelessWidget {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (streakController.streak > 0) ...[
+                      StreakBadge(streak: streakController.streak),
+                      const SizedBox(height: 12),
+                    ],
                     XpBadge(total: xpController.total),
                     const SizedBox(height: 16),
                     LevelProgressBar(totalXp: xpController.total),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'features/streak/widgets/streak_scope.dart';
+import 'features/streak/streak_controller.dart';
 import 'features/xp/widgets/xp_scope.dart';
 import 'features/xp/xp_controller.dart';
 import 'theme/app_theme.dart';
@@ -14,22 +16,27 @@ class BrainyApp extends StatefulWidget {
 
 class _BrainyAppState extends State<BrainyApp> {
   final _xpController = XpController();
+  final _streakController = StreakController();
 
   @override
   void dispose() {
     _xpController.dispose();
+    _streakController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return XpScope(
-      controller: _xpController,
-      child: MaterialApp(
-        title: 'Brainy',
-        debugShowCheckedModeBanner: false,
-        theme: AppTheme.light,
-        home: const AppShell(),
+    return StreakScope(
+      controller: _streakController,
+      child: XpScope(
+        controller: _xpController,
+        child: MaterialApp(
+          title: 'Brainy',
+          debugShowCheckedModeBanner: false,
+          theme: AppTheme.light,
+          home: const AppShell(),
+        ),
       ),
     );
   }
